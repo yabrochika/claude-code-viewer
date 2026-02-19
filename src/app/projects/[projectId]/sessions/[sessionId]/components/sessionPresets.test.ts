@@ -5,17 +5,17 @@ describe("sessionPresets", () => {
   it("provides fixed presets", () => {
     expect(sessionPresets).toHaveLength(5);
     expect(sessionPresets.map((preset) => preset.label)).toEqual([
-      "🐞 新規バグ収集",
-      "最新取得",
-      "🚀 Server起動",
-      "📝 テストケース作成",
-      "🔍 テストケースレビュー",
+      "🐞 New Bug Collection",
+      "Latest Sync",
+      "🚀 Start Server",
+      "📝 Create Test Cases",
+      "🔍 Review Test Cases",
     ]);
   });
 
   it("resolves preset by id", () => {
     expect(getSessionPresetById("server-start")?.initialMessage).toBe(
-      "@server_local_environment_setup.md に従ってServerを起動して",
+      "Start the server by following @server_local_environment_setup.md.",
     );
     expect(getSessionPresetById("unknown")).toBeUndefined();
   });

@@ -8,36 +8,36 @@ export const sessionPresetIds = [
 
 export type SessionPresetId = (typeof sessionPresetIds)[number];
 
-const TEST_CASE_CREATION_PROMPT = `QAエンジニアのAgentとして、以下の仕様でテストケースを作成してください。
+const TEST_CASE_CREATION_PROMPT = `As a QA engineer agent, create test cases according to the specification below.
 
-【出力形式】
-- TSV形式（コードブロック）で出力
-- 1行目は必ず以下のヘッダーをそのまま使用
-- 空欄は禁止。不明な場合は「不明」または「確認できない」を記載
+[Output format]
+- Output in TSV format (inside a code block)
+- Use the following header exactly as-is for the first row
+- Empty values are not allowed. If unknown, write "Unknown" or "Cannot be confirmed"
 
-テストケース名	モジュール・機能	優先度	前提条件	テスト手順	テストデータ	期待結果	状態	不具合ID	説明	想定時間（分）	事後条件	テストスイート	RTC-ID	Flow-ID	Layer	テスト種別	根拠コード	備考	プラットフォーム	端末	ドメイン	機能	実行方式	自動化状況
+Test Case Name	Module/Feature	Priority	Prerequisites	Test Steps	Test Data	Expected Result	Status	Bug ID	Description	Estimated Time (min)	Postconditions	Test Suite	RTC-ID	Flow-ID	Layer	Test Type	Code Reference	Notes	Platform	Device	Domain	Function	Execution Method	Automation Status
 
-【テスト種別の許可値（いずれか1つ）】
-- 正常系
-- 異常系
-- 非機能
-- 初期確認
-- データ整合性確認
-- 状態遷移確認
-- 運用確認
-- 障害時確認
-- 回帰
+[Allowed values for Test Type (choose exactly one)]
+- Normal
+- Abnormal
+- Non-functional
+- Initial check
+- Data consistency check
+- State transition check
+- Operational check
+- Failure scenario check
+- Regression
 
-【Layerの許可値】
+[Allowed values for Layer]
 - Core
 - Extended
 
-【優先度の許可値】
+[Allowed values for Priority]
 - High
 - Medium
 - Low`;
 
-const TEST_CASE_REVIEW_PROMPT = `QAエンジニアのAgentとして、添付資料にもとづいてテストケースレビューを実施し、結果を提示してください。
+const TEST_CASE_REVIEW_PROMPT = `As a QA engineer agent, review test cases based on the attached materials and present the results.
 
 @ref-check-prompt.md
 @content-check-plan.md
@@ -45,9 +45,10 @@ const TEST_CASE_REVIEW_PROMPT = `QAエンジニアのAgentとして、添付資�
 @README.md
 @ref-check-plan.md`;
 
-const LATEST_SYNC_PROMPT = "git pull origin stagingで最新を反映して";
+const LATEST_SYNC_PROMPT =
+  "Run git pull origin staging to sync the latest changes.";
 const SERVER_START_PROMPT =
-  "@server_local_environment_setup.md に従ってServerを起動して";
+  "Start the server by following @server_local_environment_setup.md.";
 
 export const sessionPresets: Array<{
   id: SessionPresetId;
@@ -57,31 +58,31 @@ export const sessionPresets: Array<{
 }> = [
   {
     id: "new-bug-collection",
-    label: "🐞 新規バグ収集",
-    initialMessage: "新規バグ収集",
+    label: "🐞 New Bug Collection",
+    initialMessage: "Collect new bugs",
     colorHex: "#E53935",
   },
   {
     id: "latest-sync",
-    label: "最新取得",
+    label: "Latest Sync",
     initialMessage: LATEST_SYNC_PROMPT,
     colorHex: "#00BCD4",
   },
   {
     id: "server-start",
-    label: "🚀 Server起動",
+    label: "🚀 Start Server",
     initialMessage: SERVER_START_PROMPT,
     colorHex: "#FB8C00",
   },
   {
     id: "test-case-creation",
-    label: "📝 テストケース作成",
+    label: "📝 Create Test Cases",
     initialMessage: TEST_CASE_CREATION_PROMPT,
     colorHex: "#1E88E5",
   },
   {
     id: "test-case-review",
-    label: "🔍 テストケースレビュー",
+    label: "🔍 Review Test Cases",
     initialMessage: TEST_CASE_REVIEW_PROMPT,
     colorHex: "#43A047",
   },
