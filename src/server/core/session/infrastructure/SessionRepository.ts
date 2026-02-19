@@ -10,6 +10,11 @@ import { isRegularSessionFile } from "../functions/isRegularSessionFile";
 import { VirtualConversationDatabase } from "../infrastructure/VirtualConversationDatabase";
 import { SessionMetaService } from "../services/SessionMetaService";
 
+const normalizeJoinedPathForBase = (joinedPath: string, basePath: string) =>
+  basePath.includes("\\") && !basePath.includes("/")
+    ? joinedPath.replace(/\//g, "\\")
+    : joinedPath;
+
 const LayerImpl = Effect.gen(function* () {
   const fs = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
@@ -169,15 +174,10 @@ const LayerImpl = Effect.gen(function* () {
       // Process session files (excluding agent-*.jsonl files)
       const sessionEffects = dirents.filter(isRegularSessionFile).map((entry) =>
         Effect.gen(function* () {
-          const normalizedProjectPath = claudeProjectPath.replace(/\\/g, "/");
-          const normalizedEntryPath = entry.replace(/\\/g, "/");
-          const fullPath =
-            normalizedEntryPath.startsWith("/") ||
-            /^[A-Za-z]:\//.test(normalizedEntryPath)
-              ? normalizedEntryPath
-              : path
-                  .join(normalizedProjectPath, normalizedEntryPath)
-                  .replace(/\\/g, "/");
+          const fullPath = normalizeJoinedPathForBase(
+            path.join(claudeProjectPath, entry),
+            claudeProjectPath,
+          );
           const sessionId = encodeSessionId(fullPath);
 
           // Get file stats with error handling

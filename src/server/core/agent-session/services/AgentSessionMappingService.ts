@@ -13,10 +13,10 @@ type AgentSessionMappingCache = Map<string, string>;
 const makeCacheKey = (sessionId: string, prompt: string): string => {
   return `${sessionId}::${normalizePrompt(prompt)}`;
 };
-
-const toPosixPath = (value: string) => value.replace(/\\/g, "/");
-const isAbsolutePath = (value: string) =>
-  value.startsWith("/") || /^[A-Za-z]:\//.test(value);
+const normalizeJoinedPathForBase = (joinedPath: string, basePath: string) =>
+  basePath.includes("\\") && !basePath.includes("/")
+    ? joinedPath.replace(/\//g, "\\")
+    : joinedPath;
 
 const LayerImpl = Effect.gen(function* () {
   const fs = yield* FileSystem.FileSystem;
@@ -37,13 +37,10 @@ const LayerImpl = Effect.gen(function* () {
       const agentFiles = dirents.filter((entry) => entry.startsWith("agent-"));
 
       for (const agentFile of agentFiles) {
-        const normalizedProjectPath = toPosixPath(projectPath);
-        const normalizedAgentFilePath = toPosixPath(agentFile);
-        const agentFilePath = isAbsolutePath(normalizedAgentFilePath)
-          ? normalizedAgentFilePath
-          : toPosixPath(
-              path.join(normalizedProjectPath, normalizedAgentFilePath),
-            );
+        const agentFilePath = normalizeJoinedPathForBase(
+          path.join(projectPath, agentFile),
+          projectPath,
+        );
         const content = yield* fs.readFileString(agentFilePath);
         const firstLine = content.split("\n")[0];
 
