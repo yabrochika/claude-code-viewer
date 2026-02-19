@@ -16,10 +16,36 @@ const testPathLayer = Path.layer;
 /**
  * Helper to get claude directory path for tests
  */
-const getClaudeDir = () => `${homedir()}/.claude`;
+const getClaudeDir = () => `${homedir()}/.claude`.replace(/\\/g, "/");
 
 describe("TasksService", () => {
   describe("listTasks", () => {
+    it("uses normalized claude directory paths", async () => {
+      const observedPaths: Array<string> = [];
+      const program = Effect.gen(function* () {
+        const tasksService = yield* TasksService;
+        return yield* tasksService.listTasks("/test/project");
+      });
+
+      await Effect.runPromise(
+        program.pipe(
+          Effect.provide(TasksService.Live),
+          Effect.provide(
+            testFileSystemLayer({
+              exists: (path) => {
+                observedPaths.push(path);
+                return Effect.succeed(false);
+              },
+            }),
+          ),
+          Effect.provide(testPathLayer),
+        ),
+      );
+
+      expect(observedPaths.length).toBeGreaterThan(0);
+      expect(observedPaths.every((path) => !path.includes("\\"))).toBe(true);
+    });
+
     it("returns empty array when project metadata directory does not exist", async () => {
       const program = Effect.gen(function* () {
         const tasksService = yield* TasksService;

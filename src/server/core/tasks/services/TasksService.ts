@@ -42,10 +42,11 @@ export class TasksService extends Context.Tag("TasksService")<
     this,
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
+      const toPosixPath = (value: string) => value.replace(/\\/g, "/");
 
       // Helper to find the Global Claude Directory
       const getClaudeDir = () =>
-        Effect.succeed(`${homedir()}/${CLAUDE_DIR_NAME}`);
+        Effect.succeed(toPosixPath(join(homedir(), CLAUDE_DIR_NAME)));
 
       const normalizeProjectPath = (projectPath: string) => {
         // e.g. /Users/foo/bar -> -Users-foo-bar

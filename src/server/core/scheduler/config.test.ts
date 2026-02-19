@@ -38,6 +38,17 @@ describe("scheduler config", () => {
     await rm(testDir, { recursive: true, force: true });
   });
 
+  test("SchedulerConfigBaseDir.Live is normalized to forward slashes", async () => {
+    const baseDir = await Effect.runPromise(
+      Effect.gen(function* () {
+        return yield* SchedulerConfigBaseDir;
+      }).pipe(Effect.provide(SchedulerConfigBaseDir.Live)),
+    );
+
+    expect(baseDir.includes("\\")).toBe(false);
+    expect(baseDir.endsWith("/.claude-code-viewer")).toBe(true);
+  });
+
   test("getConfigPath returns correct path", async () => {
     const result = await Effect.runPromise(
       getConfigPath.pipe(Effect.provide(testLayer)),

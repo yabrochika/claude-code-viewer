@@ -16,12 +16,16 @@ class ConfigParseError extends Data.TaggedError("ConfigParseError")<{
 
 const CONFIG_DIR = "scheduler";
 const CONFIG_FILE = "schedules.json";
+const toPosixPath = (value: string) => value.replace(/\\/g, "/");
 
 // Service to provide base directory (for testing)
 export class SchedulerConfigBaseDir extends Context.Tag(
   "SchedulerConfigBaseDir",
 )<SchedulerConfigBaseDir, string>() {
-  static Live = Layer.succeed(this, `${homedir()}/.claude-code-viewer`);
+  static Live = Layer.succeed(
+    this,
+    toPosixPath(`${homedir()}/.claude-code-viewer`),
+  );
 }
 
 export const getConfigPath = Effect.gen(function* () {
