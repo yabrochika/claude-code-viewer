@@ -1,5 +1,5 @@
 import { isAbsolute, resolve } from "node:path";
-import { FileSystem, Path } from "@effect/platform";
+import { FileSystem } from "@effect/platform";
 import { Context, Effect, Layer, Option } from "effect";
 import type { InferEffect } from "../../../lib/effect/types";
 import { parseJsonl } from "../../claude-code/functions/parseJsonl";
@@ -13,7 +13,6 @@ import { SessionMetaService } from "../services/SessionMetaService";
 
 const LayerImpl = Effect.gen(function* () {
   const fs = yield* FileSystem.FileSystem;
-  const _path = yield* Path.Path;
   const sessionMetaService = yield* SessionMetaService;
   const virtualConversationDatabase = yield* VirtualConversationDatabase;
 
