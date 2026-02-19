@@ -206,6 +206,58 @@ describe("TasksService", () => {
       expect(result).toHaveLength(1);
       expect(result[0]?.subject).toBe("Test task");
     });
+
+    it("accepts normalized metadata path with forward slashes", async () => {
+      const uuid = "12345678-1234-1234-1234-123456789abc";
+      const claudeDir = getClaudeDir();
+      const metadataProjectPath = `${claudeDir}/projects/-test-project`;
+      const tasksDir = `${claudeDir}/tasks/${uuid}`;
+
+      const existsMap = new Map<string, boolean>([
+        [metadataProjectPath, true],
+        [tasksDir, true],
+      ]);
+
+      const taskData = {
+        id: "1",
+        subject: "Normalized path task",
+        description: "metadata path with forward slashes",
+        status: "pending",
+        blocks: [],
+        blockedBy: [],
+      };
+
+      const program = Effect.gen(function* () {
+        const tasksService = yield* TasksService;
+        return yield* tasksService.listTasks(metadataProjectPath);
+      });
+
+      const result = await Effect.runPromise(
+        program.pipe(
+          Effect.provide(TasksService.Live),
+          Effect.provide(
+            testFileSystemLayer({
+              exists: (path) => Effect.succeed(existsMap.get(path) ?? false),
+              readDirectory: (path) => {
+                if (path === metadataProjectPath) {
+                  return Effect.succeed([`${uuid}.json`]);
+                }
+                if (path === tasksDir) {
+                  return Effect.succeed(["1.json"]);
+                }
+                return Effect.succeed([]);
+              },
+              stat: () => Effect.succeed(createFileInfo({})),
+              readFileString: () => Effect.succeed(JSON.stringify(taskData)),
+            }),
+          ),
+          Effect.provide(testPathLayer),
+        ),
+      );
+
+      expect(result).toHaveLength(1);
+      expect(result[0]?.subject).toBe("Normalized path task");
+    });
   });
 
   describe("getTask", () => {

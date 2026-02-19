@@ -1,4 +1,4 @@
-import { basename, extname, resolve } from "node:path";
+import { basename, extname } from "node:path";
 import { decodeProjectId } from "../../project/functions/id";
 
 export const encodeSessionId = (jsonlFilePath: string) => {
@@ -7,10 +7,6 @@ export const encodeSessionId = (jsonlFilePath: string) => {
 
 export const decodeSessionId = (projectId: string, sessionId: string) => {
   const projectPath = decodeProjectId(projectId);
-  if (/^[A-Za-z]:[\\/]/.test(projectPath)) {
-    return resolve(projectPath, `${sessionId}.jsonl`);
-  }
-
   const normalizedProjectPath = projectPath.endsWith("/")
     ? projectPath.slice(0, -1)
     : projectPath;

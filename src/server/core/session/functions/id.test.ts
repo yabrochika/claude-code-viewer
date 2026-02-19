@@ -1,3 +1,4 @@
+import { encodeProjectId } from "../../project/functions/id";
 import { decodeSessionId, encodeSessionId } from "./id";
 
 const sampleProjectId =
@@ -17,6 +18,15 @@ describe("decodeSessionId", () => {
   it("should decode session file absolute path from project id and session id", () => {
     expect(decodeSessionId(sampleProjectId, sampleSessionId)).toBe(
       sampleSessionFilePath,
+    );
+  });
+
+  it("keeps Windows-style project paths normalized with forward slashes", () => {
+    const windowsProjectPath = "C:/Users/tester/projects/sample-project";
+    const windowsProjectId = encodeProjectId(windowsProjectPath);
+
+    expect(decodeSessionId(windowsProjectId, sampleSessionId)).toBe(
+      `${windowsProjectPath}/${sampleSessionId}.jsonl`,
     );
   });
 });

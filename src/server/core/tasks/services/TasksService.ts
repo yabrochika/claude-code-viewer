@@ -82,14 +82,16 @@ export class TasksService extends Context.Tag("TasksService")<
 
           // Check if the projectPath is already pointing to a metadata directory in .claude/projects
           // Path structure: .../.claude/projects/<normalized-id>
+          const normalizedProjectPath = toPosixPath(projectPath);
+          const metadataPathFragment = `${CLAUDE_DIR_NAME}/${PROJECTS_DIR_NAME}`;
           const isMetadataPath =
-            projectPath.includes(join(CLAUDE_DIR_NAME, PROJECTS_DIR_NAME)) &&
-            projectPath.split(/[\\/]/).pop()?.startsWith("-");
+            normalizedProjectPath.includes(metadataPathFragment) &&
+            normalizedProjectPath.split("/").pop()?.startsWith("-");
 
           let projectMetaDir: string;
 
-          if (isMetadataPath && (yield* fs.exists(projectPath))) {
-            projectMetaDir = projectPath.replace(/[\\/]/g, "/");
+          if (isMetadataPath && (yield* fs.exists(normalizedProjectPath))) {
+            projectMetaDir = normalizedProjectPath;
           } else {
             const identifier = normalizeProjectPath(projectPath);
             projectMetaDir = `${claudeDir}/${PROJECTS_DIR_NAME}/${identifier}`;
