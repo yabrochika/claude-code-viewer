@@ -1,5 +1,4 @@
-import { isAbsolute, resolve } from "node:path";
-import { FileSystem } from "@effect/platform";
+import { FileSystem, Path } from "@effect/platform";
 import { Context, Effect, Layer, Ref } from "effect";
 import { UserEntrySchema } from "../../../../lib/conversation-schema/entry/UserEntrySchema";
 import { decodeProjectId } from "../../project/functions/id";
@@ -15,8 +14,13 @@ const makeCacheKey = (sessionId: string, prompt: string): string => {
   return `${sessionId}::${normalizePrompt(prompt)}`;
 };
 
+const toPosixPath = (value: string) => value.replace(/\\/g, "/");
+const isAbsolutePath = (value: string) =>
+  value.startsWith("/") || /^[A-Za-z]:\//.test(value);
+
 const LayerImpl = Effect.gen(function* () {
   const fs = yield* FileSystem.FileSystem;
+  const path = yield* Path.Path;
   const cacheRef = yield* Ref.make<AgentSessionMappingCache>(new Map());
 
   /**
@@ -33,9 +37,13 @@ const LayerImpl = Effect.gen(function* () {
       const agentFiles = dirents.filter((entry) => entry.startsWith("agent-"));
 
       for (const agentFile of agentFiles) {
-        const agentFilePath = isAbsolute(agentFile)
-          ? agentFile
-          : resolve(projectPath, agentFile);
+        const normalizedProjectPath = toPosixPath(projectPath);
+        const normalizedAgentFilePath = toPosixPath(agentFile);
+        const agentFilePath = isAbsolutePath(normalizedAgentFilePath)
+          ? normalizedAgentFilePath
+          : toPosixPath(
+              path.join(normalizedProjectPath, normalizedAgentFilePath),
+            );
         const content = yield* fs.readFileString(agentFilePath);
         const firstLine = content.split("\n")[0];
 

@@ -1,5 +1,4 @@
-import { isAbsolute, resolve } from "node:path";
-import { FileSystem } from "@effect/platform";
+import { FileSystem, Path } from "@effect/platform";
 import { Context, Effect, Layer, Option } from "effect";
 import type { InferEffect } from "../../../lib/effect/types";
 import { parseJsonl } from "../../claude-code/functions/parseJsonl";
@@ -13,6 +12,7 @@ import { SessionMetaService } from "../services/SessionMetaService";
 
 const LayerImpl = Effect.gen(function* () {
   const fs = yield* FileSystem.FileSystem;
+  const path = yield* Path.Path;
   const sessionMetaService = yield* SessionMetaService;
   const virtualConversationDatabase = yield* VirtualConversationDatabase;
 
@@ -169,9 +169,15 @@ const LayerImpl = Effect.gen(function* () {
       // Process session files (excluding agent-*.jsonl files)
       const sessionEffects = dirents.filter(isRegularSessionFile).map((entry) =>
         Effect.gen(function* () {
-          const fullPath = isAbsolute(entry)
-            ? entry
-            : resolve(claudeProjectPath, entry);
+          const normalizedProjectPath = claudeProjectPath.replace(/\\/g, "/");
+          const normalizedEntryPath = entry.replace(/\\/g, "/");
+          const fullPath =
+            normalizedEntryPath.startsWith("/") ||
+            /^[A-Za-z]:\//.test(normalizedEntryPath)
+              ? normalizedEntryPath
+              : path
+                  .join(normalizedProjectPath, normalizedEntryPath)
+                  .replace(/\\/g, "/");
           const sessionId = encodeSessionId(fullPath);
 
           // Get file stats with error handling
