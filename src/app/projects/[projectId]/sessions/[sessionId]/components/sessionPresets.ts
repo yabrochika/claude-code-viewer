@@ -34,20 +34,20 @@ const TEST_CASE_CREATION_PROMPT = `QAエンジニアのAgentとして、以下�
 
 【優先度の許可値】
 - High
-- Middium
+- Medium
 - Low`;
 
 const TEST_CASE_REVIEW_PROMPT = `QAエンジニアのAgentとして、添付資料にもとづいてテストケースレビューを実施し、結果を提示してください。
 
-@c:\\Users\\市村寛子\\Documents\\fact-check-tmp-workspace\\ref-check-prompt.md
-@c:\\Users\\市村寛子\\Documents\\fact-check-tmp-workspace\\content-check-plan.md
-@c:\\Users\\市村寛子\\Documents\\fact-check-tmp-workspace\\content-check-prompt.md
-@c:\\Users\\市村寛子\\Documents\\fact-check-tmp-workspace\\README.md
-@c:\\Users\\市村寛子\\Documents\\fact-check-tmp-workspace\\ref-check-plan.md`;
+@ref-check-prompt.md
+@content-check-plan.md
+@content-check-prompt.md
+@README.md
+@ref-check-plan.md`;
 
 const LATEST_SYNC_PROMPT = "git pull origin stagingで最新を反映して";
 const SERVER_START_PROMPT =
-  "@c:\\Users\\市村寛子\\Desktop\\server_local_environment_setup.md に従ってServerを起動して";
+  "@server_local_environment_setup.md に従ってServerを起動して";
 
 export const sessionPresets: Array<{
   id: SessionPresetId;

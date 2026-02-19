@@ -15,7 +15,7 @@ describe("sessionPresets", () => {
 
   it("resolves preset by id", () => {
     expect(getSessionPresetById("server-start")?.initialMessage).toBe(
-      "@c:\\Users\\市村寛子\\Desktop\\server_local_environment_setup.md に従ってServerを起動して",
+      "@server_local_environment_setup.md に従ってServerを起動して",
     );
     expect(getSessionPresetById("unknown")).toBeUndefined();
   });
