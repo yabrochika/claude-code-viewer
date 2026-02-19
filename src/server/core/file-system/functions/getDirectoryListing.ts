@@ -1,6 +1,6 @@
 import { existsSync } from "node:fs";
 import { readdir } from "node:fs/promises";
-import { dirname, join, resolve } from "node:path";
+import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 
 export type DirectoryEntry = {
   name: string;
@@ -19,15 +19,19 @@ export const getDirectoryListing = async (
   basePath = "/",
   showHidden = false,
 ): Promise<DirectoryListingResult> => {
+  const toPosixPath = (value: string) => value.replace(/\\/g, "/");
+
   const normalizedBasePath =
     basePath === "/"
       ? ""
-      : basePath.startsWith("/")
-        ? basePath.slice(1)
+      : basePath.startsWith("/") || basePath.startsWith("\\")
+        ? toPosixPath(basePath).slice(1)
         : basePath;
   const targetPath = resolve(rootPath, normalizedBasePath);
+  const resolvedRootPath = resolve(rootPath);
+  const relativePath = relative(resolvedRootPath, targetPath);
 
-  if (!targetPath.startsWith(resolve(rootPath))) {
+  if (relativePath.startsWith("..") || isAbsolute(relativePath)) {
     throw new Error("Invalid path: outside root directory");
   }
 
@@ -48,7 +52,7 @@ export const getDirectoryListing = async (
       entries.push({
         name: "..",
         type: "directory",
-        path: parentPath === "." ? "" : parentPath,
+        path: parentPath === "." ? "" : toPosixPath(parentPath),
       });
     }
 
@@ -58,7 +62,7 @@ export const getDirectoryListing = async (
       }
 
       const entryPath = normalizedBasePath
-        ? join(normalizedBasePath, dirent.name)
+        ? toPosixPath(join(normalizedBasePath, dirent.name))
         : dirent.name;
 
       if (dirent.isDirectory()) {

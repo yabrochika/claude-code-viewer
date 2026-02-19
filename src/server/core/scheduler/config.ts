@@ -27,7 +27,7 @@ export class SchedulerConfigBaseDir extends Context.Tag(
 export const getConfigPath = Effect.gen(function* () {
   const path = yield* Path.Path;
   const baseDir = yield* SchedulerConfigBaseDir;
-  return path.join(baseDir, CONFIG_DIR, CONFIG_FILE);
+  return path.join(baseDir, CONFIG_DIR, CONFIG_FILE).replace(/\\/g, "/");
 });
 
 export const readConfig = Effect.gen(function* () {

@@ -43,8 +43,11 @@ describe("scheduler config", () => {
       getConfigPath.pipe(Effect.provide(testLayer)),
     );
 
-    expect(result).toContain("/scheduler/schedules.json");
-    expect(result).toContain(testDir);
+    const normalizedResult = result.replace(/\\/g, "/");
+    const normalizedTestDir = testDir.replace(/\\/g, "/");
+
+    expect(normalizedResult).toContain("/scheduler/schedules.json");
+    expect(normalizedResult).toContain(normalizedTestDir);
   });
 
   test("writeConfig and readConfig work correctly", async () => {

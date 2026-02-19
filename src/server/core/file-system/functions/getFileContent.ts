@@ -1,5 +1,12 @@
 import { readFile, stat } from "node:fs/promises";
-import { extname, normalize, resolve } from "node:path";
+import {
+  basename,
+  extname,
+  isAbsolute,
+  normalize,
+  relative,
+  resolve,
+} from "node:path";
 
 /** Default maximum file size in bytes (1MB) */
 export const DEFAULT_MAX_FILE_SIZE = 1024 * 1024;
@@ -182,8 +189,7 @@ export const detectLanguage = (filePath: string): string => {
   const ext = extname(filePath).toLowerCase().slice(1);
 
   // Handle special filenames without extension
-  const basename = filePath.split("/").pop() ?? "";
-  const lowerBasename = basename.toLowerCase();
+  const lowerBasename = basename(filePath).toLowerCase();
 
   if (lowerBasename === "dockerfile") return "dockerfile";
   if (lowerBasename === "makefile") return "makefile";
@@ -244,7 +250,7 @@ export const validateFilePath = (
   let resolvedPath: string;
 
   // Handle absolute paths
-  if (filePath.startsWith("/")) {
+  if (isAbsolute(filePath)) {
     resolvedPath = normalize(filePath);
   } else {
     // Handle relative paths
@@ -253,10 +259,11 @@ export const validateFilePath = (
   }
 
   // Ensure the resolved path is within the project root
-  if (
-    !resolvedPath.startsWith(`${resolvedRoot}/`) &&
-    resolvedPath !== resolvedRoot
-  ) {
+  const relativePath = relative(resolvedRoot, resolvedPath);
+  const isOutsideRoot =
+    relativePath.startsWith("..") || isAbsolute(relativePath);
+
+  if (isOutsideRoot) {
     return { valid: false, message: "Path is outside the project root" };
   }
 

@@ -1,7 +1,7 @@
 /** @effect-diagnostics globalErrorInEffectFailure:skip-file */
 import { homedir } from "node:os";
 import { join } from "node:path";
-import { FileSystem, Path } from "@effect/platform";
+import { FileSystem } from "@effect/platform";
 import { Context, Effect, Layer, Option } from "effect";
 import {
   type Task,
@@ -42,15 +42,14 @@ export class TasksService extends Context.Tag("TasksService")<
     this,
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
-      const path = yield* Path.Path;
 
       // Helper to find the Global Claude Directory
       const getClaudeDir = () =>
-        Effect.succeed(join(homedir(), CLAUDE_DIR_NAME));
+        Effect.succeed(`${homedir()}/${CLAUDE_DIR_NAME}`);
 
       const normalizeProjectPath = (projectPath: string) => {
         // e.g. /Users/foo/bar -> -Users-foo-bar
-        const normalized = projectPath.replaceAll(path.sep, "-");
+        const normalized = projectPath.replace(/[\\/]/g, "-");
         // Ensure it starts with - if the original path started with /
         return normalized.startsWith("-") ? normalized : `-${normalized}`;
       };
@@ -72,12 +71,8 @@ export class TasksService extends Context.Tag("TasksService")<
 
           // If a specific session ID is provided, verify it exists and return it
           if (specificSessionId) {
-            const sessionTasksDir = path.join(
-              claudeDir,
-              TASKS_DIR_NAME,
-              specificSessionId,
-            );
-            if (yield* fs.exists(sessionTasksDir)) {
+            const sessionTasksDirPath = `${claudeDir}/${TASKS_DIR_NAME}/${specificSessionId}`;
+            if (yield* fs.exists(sessionTasksDirPath)) {
               return Option.some(specificSessionId);
             }
             // Return none when requested session has no tasks directory
@@ -88,7 +83,7 @@ export class TasksService extends Context.Tag("TasksService")<
           // Path structure: .../.claude/projects/<normalized-id>
           const isMetadataPath =
             projectPath.includes(join(CLAUDE_DIR_NAME, PROJECTS_DIR_NAME)) &&
-            projectPath.split(path.sep).pop()?.startsWith("-");
+            projectPath.split(/[\\/]/).pop()?.startsWith("-");
 
           let projectMetaDir: string;
 
@@ -96,12 +91,9 @@ export class TasksService extends Context.Tag("TasksService")<
             projectMetaDir = projectPath;
           } else {
             const identifier = normalizeProjectPath(projectPath);
-            projectMetaDir = path.join(
-              claudeDir,
-              PROJECTS_DIR_NAME,
-              identifier,
-            );
+            projectMetaDir = `${claudeDir}/${PROJECTS_DIR_NAME}/${identifier}`;
           }
+          projectMetaDir = `${claudeDir}/${PROJECTS_DIR_NAME}/${projectMetaDir.split(/[\\/]/).at(-1)}`;
 
           // Check if directory exists
           const exists = yield* fs.exists(projectMetaDir);
@@ -125,12 +117,12 @@ export class TasksService extends Context.Tag("TasksService")<
           const candidateInfo = yield* Effect.all(
             candidates.map((file) =>
               Effect.gen(function* () {
-                const fullPath = path.join(projectMetaDir, file);
+                const fullPath = `${projectMetaDir}/${file}`;
                 const stat = yield* fs.stat(fullPath);
                 const match = file.match(uuidPattern);
                 const uuid = match ? match[0] : file;
 
-                const tasksPath = path.join(claudeDir, TASKS_DIR_NAME, uuid);
+                const tasksPath = `${claudeDir}/${TASKS_DIR_NAME}/${uuid}`;
                 const hasTasks = yield* fs.exists(tasksPath);
 
                 return {
@@ -186,11 +178,7 @@ export class TasksService extends Context.Tag("TasksService")<
             }
             const claudeDir = yield* getClaudeDir();
             const identifier = normalizeProjectPath(projectPath);
-            const projectMetaDir = path.join(
-              claudeDir,
-              PROJECTS_DIR_NAME,
-              identifier,
-            );
+            const projectMetaDir = `${claudeDir}/${PROJECTS_DIR_NAME}/${identifier}`;
             return yield* Effect.fail(
               new Error(
                 `Project metadata directory not found or no UUID: ${projectMetaDir}`,
@@ -217,8 +205,9 @@ export class TasksService extends Context.Tag("TasksService")<
             specificSessionId,
           );
 
-          return Option.map(uuidOption, (uuid) =>
-            path.join(claudeDir, TASKS_DIR_NAME, uuid),
+          return Option.map(
+            uuidOption,
+            (uuid) => `${claudeDir}/${TASKS_DIR_NAME}/${uuid}`,
           );
         });
 
@@ -236,7 +225,7 @@ export class TasksService extends Context.Tag("TasksService")<
             projectPath,
             specificSessionId,
           );
-          return path.join(claudeDir, TASKS_DIR_NAME, uuid);
+          return `${claudeDir}/${TASKS_DIR_NAME}/${uuid}`;
         });
 
       const listTasks = (projectPath: string, specificSessionId?: string) =>
@@ -262,7 +251,7 @@ export class TasksService extends Context.Tag("TasksService")<
 
           for (const file of files) {
             if (!file.endsWith(".json")) continue;
-            const content = yield* fs.readFileString(path.join(tasksDir, file));
+            const content = yield* fs.readFileString(`${tasksDir}/${file}`);
             try {
               const task = JSON.parse(content);
               // Validate with schema optionally
@@ -336,7 +325,7 @@ export class TasksService extends Context.Tag("TasksService")<
             projectPath,
             specificSessionId,
           );
-          const taskFile = path.join(tasksDir, `${turnId}.json`);
+          const taskFile = `${tasksDir}/${turnId}.json`;
 
           const exists = yield* fs.exists(taskFile);
           if (!exists) {
@@ -386,7 +375,7 @@ export class TasksService extends Context.Tag("TasksService")<
             ...turnDef,
           };
 
-          const filePath = path.join(tasksDir, `${newId}.json`);
+          const filePath = `${tasksDir}/${newId}.json`;
           yield* fs.writeFileString(filePath, JSON.stringify(newTask, null, 2));
 
           return newTask;
@@ -402,7 +391,7 @@ export class TasksService extends Context.Tag("TasksService")<
             projectPath,
             specificSessionId,
           );
-          const filePath = path.join(tasksDir, `${update.taskId}.json`);
+          const filePath = `${tasksDir}/${update.taskId}.json`;
 
           const exists = yield* fs.exists(filePath);
           if (!exists) {

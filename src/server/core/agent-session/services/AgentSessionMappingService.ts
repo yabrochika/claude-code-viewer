@@ -1,4 +1,5 @@
-import { FileSystem, Path } from "@effect/platform";
+import { isAbsolute, resolve } from "node:path";
+import { FileSystem } from "@effect/platform";
 import { Context, Effect, Layer, Ref } from "effect";
 import { UserEntrySchema } from "../../../../lib/conversation-schema/entry/UserEntrySchema";
 import { decodeProjectId } from "../../project/functions/id";
@@ -16,7 +17,6 @@ const makeCacheKey = (sessionId: string, prompt: string): string => {
 
 const LayerImpl = Effect.gen(function* () {
   const fs = yield* FileSystem.FileSystem;
-  const path = yield* Path.Path;
   const cacheRef = yield* Ref.make<AgentSessionMappingCache>(new Map());
 
   /**
@@ -33,7 +33,9 @@ const LayerImpl = Effect.gen(function* () {
       const agentFiles = dirents.filter((entry) => entry.startsWith("agent-"));
 
       for (const agentFile of agentFiles) {
-        const agentFilePath = path.resolve(projectPath, agentFile);
+        const agentFilePath = isAbsolute(agentFile)
+          ? agentFile
+          : resolve(projectPath, agentFile);
         const content = yield* fs.readFileString(agentFilePath);
         const firstLine = content.split("\n")[0];
 

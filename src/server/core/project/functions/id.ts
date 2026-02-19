@@ -9,5 +9,9 @@ export const decodeProjectId = (id: string) => {
 };
 
 export const encodeProjectIdFromSessionFilePath = (sessionFilePath: string) => {
-  return encodeProjectId(dirname(sessionFilePath));
+  const projectPath = dirname(sessionFilePath)
+    .replace(/\\/g, "/")
+    .replace(/^[A-Za-z]:(?=\/)/, "");
+
+  return encodeProjectId(projectPath);
 };

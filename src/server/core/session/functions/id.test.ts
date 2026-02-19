@@ -1,4 +1,3 @@
-import { resolve } from "node:path";
 import { decodeSessionId, encodeSessionId } from "./id";
 
 const sampleProjectId =
@@ -6,10 +5,7 @@ const sampleProjectId =
 const sampleProjectPath =
   "/path/to/claude-code-project-dir/projects/sample-project";
 const sampleSessionId = "1af7fc5e-8455-4414-9ccd-011d40f70b2a";
-const sampleSessionFilePath = resolve(
-  sampleProjectPath,
-  `${sampleSessionId}.jsonl`,
-);
+const sampleSessionFilePath = `${sampleProjectPath}/${sampleSessionId}.jsonl`;
 
 describe("encodeSessionId", () => {
   it("should encode session id from jsonl file path", () => {

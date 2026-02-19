@@ -7,5 +7,13 @@ export const encodeSessionId = (jsonlFilePath: string) => {
 
 export const decodeSessionId = (projectId: string, sessionId: string) => {
   const projectPath = decodeProjectId(projectId);
-  return resolve(projectPath, `${sessionId}.jsonl`);
+  if (/^[A-Za-z]:[\\/]/.test(projectPath)) {
+    return resolve(projectPath, `${sessionId}.jsonl`);
+  }
+
+  const normalizedProjectPath = projectPath.endsWith("/")
+    ? projectPath.slice(0, -1)
+    : projectPath;
+
+  return `${normalizedProjectPath}/${sessionId}.jsonl`;
 };

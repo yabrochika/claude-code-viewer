@@ -12,8 +12,10 @@ type AgentSdkQueryOptions = NonNullable<
 >;
 
 const npxCacheRegExp = /_npx[/\\].*node_modules[\\/]\.bin/;
+const escapeRegExp = (value: string) =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const localNodeModulesBinRegExp = new RegExp(
-  `${process.cwd()}/node_modules/.bin`,
+  `${escapeRegExp(process.cwd()).replace(/\\\\/g, "[/\\\\]")}[/\\\\]node_modules[/\\\\]\\.bin`,
 );
 
 export const claudeCodePathPriority = (path: string): number => {

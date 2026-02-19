@@ -1,3 +1,4 @@
+import { isAbsolute, resolve } from "node:path";
 import { FileSystem, Path } from "@effect/platform";
 import { Context, Effect, Layer, Option } from "effect";
 import type { InferEffect } from "../../../lib/effect/types";
@@ -12,7 +13,7 @@ import { SessionMetaService } from "../services/SessionMetaService";
 
 const LayerImpl = Effect.gen(function* () {
   const fs = yield* FileSystem.FileSystem;
-  const path = yield* Path.Path;
+  const _path = yield* Path.Path;
   const sessionMetaService = yield* SessionMetaService;
   const virtualConversationDatabase = yield* VirtualConversationDatabase;
 
@@ -169,7 +170,9 @@ const LayerImpl = Effect.gen(function* () {
       // Process session files (excluding agent-*.jsonl files)
       const sessionEffects = dirents.filter(isRegularSessionFile).map((entry) =>
         Effect.gen(function* () {
-          const fullPath = path.resolve(claudeProjectPath, entry);
+          const fullPath = isAbsolute(entry)
+            ? entry
+            : resolve(claudeProjectPath, entry);
           const sessionId = encodeSessionId(fullPath);
 
           // Get file stats with error handling
