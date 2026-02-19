@@ -88,12 +88,11 @@ export class TasksService extends Context.Tag("TasksService")<
           let projectMetaDir: string;
 
           if (isMetadataPath && (yield* fs.exists(projectPath))) {
-            projectMetaDir = projectPath;
+            projectMetaDir = projectPath.replace(/[\\/]/g, "/");
           } else {
             const identifier = normalizeProjectPath(projectPath);
             projectMetaDir = `${claudeDir}/${PROJECTS_DIR_NAME}/${identifier}`;
           }
-          projectMetaDir = `${claudeDir}/${PROJECTS_DIR_NAME}/${projectMetaDir.split(/[\\/]/).at(-1)}`;
 
           // Check if directory exists
           const exists = yield* fs.exists(projectMetaDir);
