@@ -6,7 +6,7 @@ import {
   testFileSystemLayer,
 } from "../../../../testing/layers/testFileSystemLayer";
 import { testPlatformLayer } from "../../../../testing/layers/testPlatformLayer";
-import { decodeProjectId } from "../../project/functions/id";
+import { decodeProjectId, encodeProjectId } from "../../project/functions/id";
 import type { ErrorJsonl, SessionDetail, SessionMeta } from "../../types";
 import { SessionRepository } from "../infrastructure/SessionRepository";
 import { VirtualConversationDatabase } from "../infrastructure/VirtualConversationDatabase";
@@ -263,6 +263,89 @@ describe("SessionRepository", () => {
   });
 
   describe("getSessions", () => {
+    it("normalizes jsonlFilePath to forward slashes for real and virtual sessions", async () => {
+      const windowsProjectPath = "C:\\test\\project";
+      const projectId = encodeProjectId(windowsProjectPath);
+      const mockDate = new Date("2024-01-01T00:00:00.000Z");
+      const virtualDate = new Date("2024-01-02T00:00:00.000Z");
+
+      const mockMeta: SessionMeta = createMockSessionMeta({
+        messageCount: 1,
+        firstUserMessage: null,
+      });
+
+      const FileSystemMock = testFileSystemLayer({
+        exists: (path: string) => Effect.succeed(path === windowsProjectPath),
+        readDirectory: (path: string) =>
+          path === windowsProjectPath
+            ? Effect.succeed(["session1.jsonl"])
+            : Effect.succeed([]),
+        stat: () =>
+          Effect.succeed(createFileInfo({ mtime: Option.some(mockDate) })),
+      });
+
+      const SessionMetaServiceMock = testSessionMetaServiceLayer(mockMeta);
+      const PredictSessionsDatabaseMock = Layer.succeed(
+        VirtualConversationDatabase,
+        {
+          getProjectVirtualConversations: () =>
+            Effect.succeed([
+              {
+                projectId,
+                sessionId: "virtual-session",
+                conversations: [
+                  {
+                    type: "user",
+                    uuid: "550e8400-e29b-41d4-a716-446655440000",
+                    timestamp: virtualDate.toISOString(),
+                    message: { role: "user", content: "hello" },
+                    isSidechain: false,
+                    userType: "external",
+                    cwd: "C:/test",
+                    sessionId: "virtual-session",
+                    version: "1.0.0",
+                    parentUuid: null,
+                  },
+                ],
+              },
+            ]),
+          getSessionVirtualConversation: () => Effect.succeed(null),
+          createVirtualConversation: () => Effect.void,
+          deleteVirtualConversations: () => Effect.void,
+        },
+      );
+
+      const program = Effect.gen(function* () {
+        const repo = yield* SessionRepository;
+        return yield* repo.getSessions(projectId);
+      });
+
+      const result = await Effect.runPromise(
+        program.pipe(
+          Effect.provide(SessionRepository.Live),
+          Effect.provide(SessionMetaServiceMock),
+          Effect.provide(PredictSessionsDatabaseMock),
+          Effect.provide(FileSystemMock),
+          Effect.provide(testPlatformLayer()),
+        ),
+      );
+
+      expect(result.sessions).toHaveLength(2);
+      expect(
+        result.sessions.every((s) => !s.jsonlFilePath.includes("\\")),
+      ).toBe(true);
+      expect(
+        result.sessions.some(
+          (s) => s.jsonlFilePath === "C:/test/project/session1.jsonl",
+        ),
+      ).toBe(true);
+      expect(
+        result.sessions.some(
+          (s) => s.jsonlFilePath === "C:/test/project/virtual-session.jsonl",
+        ),
+      ).toBe(true);
+    });
+
     it("returns list of sessions within project", async () => {
       const projectPath = "/test/project";
       const projectId = Buffer.from(projectPath).toString("base64url");

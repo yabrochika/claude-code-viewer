@@ -14,6 +14,7 @@ const normalizeJoinedPathForBase = (joinedPath: string, basePath: string) =>
   basePath.includes("\\") && !basePath.includes("/")
     ? joinedPath.replace(/\//g, "\\")
     : joinedPath;
+const toPosixPath = (value: string) => value.replace(/\\/g, "/");
 
 const LayerImpl = Effect.gen(function* () {
   const fs = yield* FileSystem.FileSystem;
@@ -104,7 +105,7 @@ const LayerImpl = Effect.gen(function* () {
 
             const virtualSession: SessionDetail = {
               id: sessionId,
-              jsonlFilePath: `${decodeProjectId(projectId)}/${sessionId}.jsonl`,
+              jsonlFilePath: `${toPosixPath(decodeProjectId(projectId))}/${sessionId}.jsonl`,
               meta: {
                 messageCount: 0,
                 firstUserMessage: null,
@@ -174,15 +175,16 @@ const LayerImpl = Effect.gen(function* () {
       // Process session files (excluding agent-*.jsonl files)
       const sessionEffects = dirents.filter(isRegularSessionFile).map((entry) =>
         Effect.gen(function* () {
-          const fullPath = normalizeJoinedPathForBase(
+          const fullPathForFs = normalizeJoinedPathForBase(
             path.join(claudeProjectPath, entry),
             claudeProjectPath,
           );
-          const sessionId = encodeSessionId(fullPath);
+          const sessionId = encodeSessionId(fullPathForFs);
+          const fullPathForResponse = toPosixPath(fullPathForFs);
 
           // Get file stats with error handling
           const stat = yield* Effect.tryPromise(() =>
-            fs.stat(fullPath).pipe(Effect.runPromise),
+            fs.stat(fullPathForFs).pipe(Effect.runPromise),
           ).pipe(Effect.catchAll(() => Effect.succeed(null)));
 
           if (!stat) {
@@ -191,7 +193,7 @@ const LayerImpl = Effect.gen(function* () {
 
           return {
             id: sessionId,
-            jsonlFilePath: fullPath,
+            jsonlFilePath: fullPathForResponse,
             lastModifiedAt: Option.getOrElse(stat.mtime, () => new Date()),
           };
         }),
@@ -279,7 +281,7 @@ const LayerImpl = Effect.gen(function* () {
 
           return {
             id: sessionId,
-            jsonlFilePath: `${decodeProjectId(projectId)}/${sessionId}.jsonl`,
+            jsonlFilePath: `${toPosixPath(decodeProjectId(projectId))}/${sessionId}.jsonl`,
             lastModifiedAt:
               last !== undefined ? new Date(last.timestamp) : new Date(),
             meta: {
