@@ -43,25 +43,25 @@ const TEST_CASE_CREATION_PROMPT = `QAエンジニアとして、以下の仕様�
 - Low`;
 
 const LATEST_SYNC_PROMPT =
-  "Run git pull origin staging to sync the latest changes.";
+  "最新変更を同期するため、git pull origin staging を実行してください。";
 const SERVER_START_PROMPT =
-  "Start the server by following @server_local_environment_setup.md.";
-const DEFECT_TO_STORY_PROMPT = `Please convert an EZ Test defect into a bug story under the specified Epic.
+  "サーバー起動は @server_local_environment_setup.md の手順に従って実施してください。";
+const DEFECT_TO_STORY_PROMPT = `指定した Epic 配下に、EZ Test の Defect を基にしたバグ Story を作成してください。
 
 - EZ Test Defect URL: <PASTE_DEFECT_URL_HERE>
 - Epic URL: <PASTE_EPIC_URL_HERE>
 
-Requirements:
-1. Create one bug story under the specified Epic.
-2. Copy the defect details from EZ Test into the created story.
-3. Return the created story URL and a short transfer summary.`;
-const TEST_CASE_REVIEW_PROMPT = `As a QA engineer agent, review the target test cases based on the attached materials and report findings.
+要件:
+1. 指定した Epic 配下にバグ Story を 1 件作成すること。
+2. EZ Test の Defect 内容を作成した Story に転記すること。
+3. 作成した Story の URL と転記サマリを簡潔に返すこと。`;
+const TEST_CASE_REVIEW_PROMPT = `QA エンジニアとして、添付資料を基に対象テストケースをレビューし、指摘事項を報告してください。
 
-@c:Users市村寛子Documents\fact-check-tmp-workspacecontent-check-plan.md
-@c:Users市村寛子Documents\fact-check-tmp-workspacecontent-check-prompt.md
-@c:Users市村寛子Documents\fact-check-tmp-workspaceREADME.md
-@c:Users市村寛子Documents\fact-check-tmp-workspace\ref-check-plan.md
-@c:Users市村寛子Documents\fact-check-tmp-workspace\ref-check-prompt.md`;
+@c:\\Users\\市村寛子\\Documents\\fact-check-tmp-workspace\\content-check-plan.md
+@c:\\Users\\市村寛子\\Documents\\fact-check-tmp-workspace\\content-check-prompt.md
+@c:\\Users\\市村寛子\\Documents\\fact-check-tmp-workspace\\README.md
+@c:\\Users\\市村寛子\\Documents\\fact-check-tmp-workspace\\ref-check-plan.md
+@c:\\Users\\市村寛子\\Documents\\fact-check-tmp-workspace\\ref-check-prompt.md`;
 
 export const sessionPresets: Array<{
   id: SessionPresetId;

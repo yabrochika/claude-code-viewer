@@ -941,7 +941,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        207
+        190
       ]
     ],
     "translation": "加载中..."
@@ -2752,7 +2752,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        170
+        153
       ]
     ],
     "translation": "已暂停"
@@ -2771,7 +2771,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        168
+        151
       ]
     ],
     "translation": "运行中"
@@ -2786,7 +2786,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        209
+        192
       ]
     ],
     "translation": "加载更多"

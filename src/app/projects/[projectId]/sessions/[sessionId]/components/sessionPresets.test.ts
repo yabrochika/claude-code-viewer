@@ -15,7 +15,7 @@ describe("sessionPresets", () => {
 
   it("resolves preset by id", () => {
     expect(getSessionPresetById("server-start")?.initialMessage).toBe(
-      "Start the server by following @server_local_environment_setup.md.",
+      "サーバー起動は @server_local_environment_setup.md の手順に従って実施してください。",
     );
     expect(getSessionPresetById("unknown")).toBeUndefined();
   });

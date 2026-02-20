@@ -30,17 +30,19 @@ export const ProjectList: FC = () => {
   } | null>(null);
 
   if (projects.length === 0) {
-    <Card>
-      <CardContent className="flex flex-col items-center justify-center py-12">
-        <FolderIcon className="w-12 h-12 text-muted-foreground mb-4" />
-        <h3 className="text-lg font-medium mb-2">
-          <Trans id="project_list.no_projects.title" />
-        </h3>
-        <p className="text-muted-foreground text-center max-w-md">
-          <Trans id="project_list.no_projects.description" />
-        </p>
-      </CardContent>
-    </Card>;
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-center justify-center py-12">
+          <FolderIcon className="w-12 h-12 text-muted-foreground mb-4" />
+          <h3 className="text-lg font-medium mb-2">
+            <Trans id="project_list.no_projects.title" />
+          </h3>
+          <p className="text-muted-foreground text-center max-w-md">
+            <Trans id="project_list.no_projects.description" />
+          </p>
+        </CardContent>
+      </Card>
+    );
   }
 
   return (

@@ -602,7 +602,7 @@ export const ChatInput: FC<ChatInputProps> = ({
 
               <div className="flex items-center gap-2">
                 {enableScheduledSend && sendMode === "immediate" && (
-                  <div className="hidden sm:flex items-center gap-2">
+                  <div className="hidden sm:flex items-center gap-2 order-2">
                     <Label
                       htmlFor="send-mode-desktop"
                       className="text-xs sr-only"
@@ -657,7 +657,7 @@ export const ChatInput: FC<ChatInputProps> = ({
                     disabled
                   }
                   size={buttonSize}
-                  className="gap-2 px-6 h-9 transition-all duration-300 shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] bg-pink-500 hover:bg-pink-400 text-white disabled:bg-muted disabled:text-muted-foreground disabled:shadow-none"
+                  className="order-1 gap-2 px-6 h-9 transition-all duration-300 shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] bg-[#2aa23a] hover:bg-[#248f32] text-white disabled:bg-muted disabled:text-muted-foreground disabled:shadow-none"
                 >
                   {isPending ? (
                     <>

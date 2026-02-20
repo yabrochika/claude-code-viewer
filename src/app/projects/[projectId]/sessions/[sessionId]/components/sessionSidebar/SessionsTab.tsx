@@ -2,7 +2,7 @@ import { Trans } from "@lingui/react";
 import { Link, useSearch } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import { MessageSquareIcon, PlusIcon } from "lucide-react";
-import type { FC } from "react";
+import { type FC, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -11,12 +11,14 @@ import { useConfig } from "../../../../../../hooks/useConfig";
 import { useProject } from "../../../../hooks/useProject";
 import { firstUserMessageToTitle } from "../../../../services/firstCommandToTitle";
 import { sessionProcessesAtom } from "../../store/sessionProcessesAtom";
+import { AddWorktreeModal } from "./AddWorktreeModal";
 
 export const SessionsTab: FC<{
   currentSessionId: string;
   projectId: string;
   isMobile?: boolean;
 }> = ({ currentSessionId, projectId }) => {
+  const [isAddWorktreeModalOpen, setIsAddWorktreeModalOpen] = useState(false);
   const {
     data: projectData,
     fetchNextPage,
@@ -73,16 +75,15 @@ export const SessionsTab: FC<{
           <h2 className="font-semibold text-sm text-sidebar-foreground">
             ワークスペース
           </h2>
-          <Link to="/projects">
-            <Button
-              variant="secondary"
-              size="sm"
-              className="h-7 px-2 text-xs gap-1.5"
-            >
-              <PlusIcon className="w-3.5 h-3.5" />
-              追加
-            </Button>
-          </Link>
+          <Button
+            variant="secondary"
+            size="sm"
+            className="h-7 px-2 text-xs gap-1.5"
+            onClick={() => setIsAddWorktreeModalOpen(true)}
+          >
+            <PlusIcon className="w-3.5 h-3.5" />
+            追加
+          </Button>
         </div>
         <p className="text-[10px] text-sidebar-foreground/60">
           {sessions.length}件のワークスペース
@@ -90,11 +91,12 @@ export const SessionsTab: FC<{
       </div>
 
       <div className="flex-1 overflow-y-auto p-2 space-y-2 bg-[#070f24]">
-        <Link
-          to="/projects"
+        <button
+          type="button"
           className={cn(
-            "block rounded-xl p-2.5 transition-all duration-200 border border-blue-800/60 hover:border-blue-500/80 bg-[#0b1a3d] hover:bg-[#0f2456]",
+            "block w-full rounded-xl p-2.5 transition-all duration-200 border border-blue-800/60 hover:border-blue-500/80 bg-[#0b1a3d] hover:bg-[#0f2456]",
           )}
+          onClick={() => setIsAddWorktreeModalOpen(true)}
         >
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-500/20 text-blue-300">
@@ -104,7 +106,7 @@ export const SessionsTab: FC<{
               <p className="text-sm font-semibold text-blue-100">新規</p>
             </div>
           </div>
-        </Link>
+        </button>
         {sortedSessions.map((session) => {
           const isActive = session.id === currentSessionId;
           const title =
@@ -195,6 +197,10 @@ export const SessionsTab: FC<{
           </div>
         )}
       </div>
+      <AddWorktreeModal
+        open={isAddWorktreeModalOpen}
+        onOpenChange={setIsAddWorktreeModalOpen}
+      />
     </div>
   );
 };

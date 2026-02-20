@@ -941,7 +941,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        207
+        190
       ]
     ],
     "translation": "読み込み中..."
@@ -2752,7 +2752,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        170
+        153
       ]
     ],
     "translation": "一時停止"
@@ -2771,7 +2771,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        168
+        151
       ]
     ],
     "translation": "実行中"
@@ -2786,7 +2786,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        209
+        192
       ]
     ],
     "translation": "さらに読み込む"

@@ -941,7 +941,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        207
+        190
       ]
     ],
     "translation": "Loading..."
@@ -2752,7 +2752,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        170
+        153
       ]
     ],
     "translation": "Paused"
@@ -2771,7 +2771,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        168
+        151
       ]
     ],
     "translation": "Running"
@@ -2786,7 +2786,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        209
+        192
       ]
     ],
     "translation": "Load More"
