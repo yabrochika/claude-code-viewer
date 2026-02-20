@@ -2092,17 +2092,6 @@
     ],
     "translation": "Set Up New Project"
   },
-  "project_list.last_modified": {
-    "placeholders": {},
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/components/ProjectList.tsx",
-        54
-      ]
-    ],
-    "translation": "Last Modified: "
-  },
   "project_list.messages": {
     "placeholders": {},
     "comments": [],
@@ -2120,7 +2109,7 @@
     "origin": [
       [
         "src/app/projects/components/ProjectList.tsx",
-        31
+        29
       ]
     ],
     "translation": "No Claude Code projects found in your ~/.claude/projects directory. Start a conversation with Claude Code to set up your first project."
@@ -2131,21 +2120,10 @@
     "origin": [
       [
         "src/app/projects/components/ProjectList.tsx",
-        28
+        26
       ]
     ],
     "translation": "No Projects Found"
-  },
-  "project_list.view_conversations": {
-    "placeholders": {},
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/components/ProjectList.tsx",
-        72
-      ]
-    ],
-    "translation": "View Conversations"
   },
   "projects.page.description": {
     "placeholders": {},
@@ -2153,7 +2131,7 @@
     "origin": [
       [
         "src/app/projects/page.tsx",
-        13
+        14
       ]
     ],
     "translation": "View Claude Code conversation history and project operations"
@@ -2164,7 +2142,7 @@
     "origin": [
       [
         "src/app/projects/page.tsx",
-        29
+        33
       ]
     ],
     "translation": "Loading projects..."
@@ -2175,7 +2153,7 @@
     "origin": [
       [
         "src/app/projects/page.tsx",
-        21
+        22
       ]
     ],
     "translation": "Projects"

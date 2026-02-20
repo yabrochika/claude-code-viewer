@@ -2092,17 +2092,6 @@
     ],
     "translation": "设置新项目"
   },
-  "project_list.last_modified": {
-    "placeholders": {},
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/components/ProjectList.tsx",
-        54
-      ]
-    ],
-    "translation": "最后修改时间:"
-  },
   "project_list.messages": {
     "placeholders": {},
     "comments": [],
@@ -2120,7 +2109,7 @@
     "origin": [
       [
         "src/app/projects/components/ProjectList.tsx",
-        31
+        29
       ]
     ],
     "translation": "在您的 ~/.claude/projects 目录中未找到 Claude Code 项目。与 Claude Code 开始对话以创建您的第一个项目。"
@@ -2131,21 +2120,10 @@
     "origin": [
       [
         "src/app/projects/components/ProjectList.tsx",
-        28
+        26
       ]
     ],
     "translation": "未找到项目"
-  },
-  "project_list.view_conversations": {
-    "placeholders": {},
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/components/ProjectList.tsx",
-        72
-      ]
-    ],
-    "translation": "查看对话"
   },
   "projects.page.description": {
     "placeholders": {},
@@ -2153,7 +2131,7 @@
     "origin": [
       [
         "src/app/projects/page.tsx",
-        13
+        14
       ]
     ],
     "translation": "查看 Claude Code 对话历史和项目操作"
@@ -2164,7 +2142,7 @@
     "origin": [
       [
         "src/app/projects/page.tsx",
-        29
+        33
       ]
     ],
     "translation": "正在加载项目..."
@@ -2175,7 +2153,7 @@
     "origin": [
       [
         "src/app/projects/page.tsx",
-        21
+        22
       ]
     ],
     "translation": "项目"

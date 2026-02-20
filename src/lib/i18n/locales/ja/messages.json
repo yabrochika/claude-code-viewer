@@ -2092,17 +2092,6 @@
     ],
     "translation": "新規プロジェクトをセットアップ"
   },
-  "project_list.last_modified": {
-    "placeholders": {},
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/components/ProjectList.tsx",
-        54
-      ]
-    ],
-    "translation": "最終更新："
-  },
   "project_list.messages": {
     "placeholders": {},
     "comments": [],
@@ -2120,7 +2109,7 @@
     "origin": [
       [
         "src/app/projects/components/ProjectList.tsx",
-        31
+        29
       ]
     ],
     "translation": "~/.claude/projectsディレクトリにClaude Codeプロジェクトが見つかりません。Claude Codeとの会話を開始して、最初のプロジェクトをセットアップしてください。"
@@ -2131,21 +2120,10 @@
     "origin": [
       [
         "src/app/projects/components/ProjectList.tsx",
-        28
+        26
       ]
     ],
     "translation": "プロジェクトが見つかりません"
-  },
-  "project_list.view_conversations": {
-    "placeholders": {},
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/components/ProjectList.tsx",
-        72
-      ]
-    ],
-    "translation": "会話を表示"
   },
   "projects.page.description": {
     "placeholders": {},
@@ -2153,7 +2131,7 @@
     "origin": [
       [
         "src/app/projects/page.tsx",
-        13
+        14
       ]
     ],
     "translation": "Claude Codeの会話履歴とプロジェクトの操作を閲覧"
@@ -2164,7 +2142,7 @@
     "origin": [
       [
         "src/app/projects/page.tsx",
-        29
+        33
       ]
     ],
     "translation": "プロジェクトを読み込み中..."
@@ -2175,7 +2153,7 @@
     "origin": [
       [
         "src/app/projects/page.tsx",
-        21
+        22
       ]
     ],
     "translation": "プロジェクト"
