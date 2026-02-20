@@ -1,6 +1,11 @@
 export const sessionPresetIds = [
   "latest-sync",
   "server-start",
+  "admin-app",
+  "backend-api-start",
+  "monorepo-management",
+  "customer-app-development",
+  "admin-app-start",
   "bug-collection",
   "test-case-creation",
   "defect-to-story",
@@ -126,16 +131,264 @@ make run
 
 ### 7. 動作確認
 curl http://localhost:$APP_PORT/healthz`;
-const BUG_COLLECTION_PROMPT = `プロジェクト内の不具合情報を収集して、以下の形式で整理してください。
+const ADMIN_APP_PROMPT = `### 前提条件
+- Node.js 20.11.0以上（推奨: 20.17.x）であることを確認
+- npm 10.2.0以上であることを確認
+- Docker & Docker Compose（推奨: Docker 24.0以降）であることを確認
 
-- 不具合タイトル
-- 影響範囲
-- 再現手順
-- 期待結果と実際の結果
-- 優先度（High / Middium / Low）
-- 備考
+### 環境確認
+# Node.js バージョン確認（期待値: v20.11.0以上）
+node --version
 
-情報が不足している場合は、不足項目を明確に列挙してください。`;
+# npm バージョン確認（期待値: 10.2.0以上）
+npm --version
+
+# Docker バージョン確認（期待値: Docker version 24.0.x）
+docker --version
+
+# Docker Compose バージョン確認
+docker compose version
+
+### 1. リポジトリのクローンと依存関係インストール
+
+
+git clone https://github.com/japantradingcardcenter/falcon9.git
+
+# ルートで依存関係をインストール
+cd falcon9/typescript
+npm install
+
+
+### 2. Backend API サーバーの起動（Docker使用）
+
+
+# serverディレクトリに移動
+cd ../../server
+
+# 環境変数ファイルの準備
+# オプション1: 1Password CLIを使用（推奨）
+make setup_env
+
+# オプション2: 手動で .env ファイルを作成（1Password CLIが利用できない場合）
+# 下記の最小環境変数を参照して server/.env ファイルを作成
+
+# Docker環境の起動
+make up
+
+# APIサーバーの起動（別ターミナル）
+make run
+
+### 3. Customer App の起動
+
+
+# Customer Appディレクトリに移動
+cd ../typescript/apps/customer
+
+# Customer App の起動（ローカルAPIサーバー使用）
+npm run dev:local  # http://localhost:3000
+
+# または、リモートAPIサーバーを使用する場合
+npm run dev:remote  # http://localhost:3000
+
+
+### 4. Admin App の起動
+
+
+# Admin Appディレクトリに移動
+cd ../typescript/apps/admin
+
+# Admin App の起動（ローカルAPIサーバー使用）
+npm run dev:local  # http://localhost:3001`;
+const MONOREPO_MANAGEMENT_PROMPT = `### Monorepo管理（Turbo）
+
+\`\`\`bash
+# ルートディレクトリ（typescript/）から実行
+
+# すべてのアプリをビルド
+npm run build
+
+# すべてのアプリの開発サーバー起動
+npm run dev
+
+# リント
+npm run lint
+
+# フォーマット
+npm run format
+\`\`\``;
+const CUSTOMER_APP_DEVELOPMENT_PROMPT = `### Customer App 個別コマンド
+
+\`\`\`bash
+# Customer Appディレクトリ（typescript/apps/customer/）から実行
+
+# 開発サーバー起動（ローカルAPIサーバー使用）
+npm run dev:local
+
+# 開発サーバー起動（リモートAPIサーバー使用）
+npm run dev:remote
+
+# 開発サーバー起動（デフォルト）
+npm run dev
+
+# ビルド
+npm run build
+
+# 本番サーバー起動
+npm run start
+\`\`\``;
+const ADMIN_APP_START_PROMPT = `\`\`\`bash
+# Admin Appディレクトリ（typescript/apps/admin/）から実行
+
+# 開発サーバー起動（ローカルAPIサーバー使用）
+npm run dev:local
+
+# 開発サーバー起動（リモートAPIサーバー使用）
+npm run dev:remote
+
+# 開発サーバー起動（デフォルト）
+npm run dev
+
+# ビルド
+npm run build
+
+# 本番サーバー起動
+npm run start
+\`\`\``;
+const BACKEND_API_START_PROMPT = `\`\`\`bash
+cd server
+
+# 開発サーバー起動（ホットリロード）
+make run
+
+# テスト実行
+make test-local
+
+# DB マイグレーション
+make add-migration NAME=example_migration
+
+# API ドキュメント生成
+make doc_gen
+\`\`\``;
+const BUG_COLLECTION_PROMPT = `---
+name: bug-collect
+description: Notionのバグ収集DBとGitHub最新情報を比較し、差分を抽出→Notion貼り付け用に整形する
+tools: Read, Glob, Grep, Bash
+model: sonnet
+---
+
+あなたは「バグ収集」専用エージェントです。推測や創作は禁止です。
+目的は以下の3点です：
+
+1) Notion（ユーザー指定URL）の現状と、GitHubの最新情報を確認して差分を抽出
+2) 差分をNotionに追加できる形に整形（この会話からNotionへ直接編集はしない）
+3) 追加内容はユーザー指定テンプレートで記載（そのままNotionに貼れる）
+
+# 制約（重要）
+- Notionページに直接書き込む操作はできない。必ず「Notion貼り付け用テキスト」を出力する。
+- Notion内容を取得できない場合は、ユーザーに「Notionからエクスポート or コピペ」してもらう（推測しない）。
+- GitHubの最新情報は、ユーザーが提示する「リポジトリURL」「PR/issue/compareリンク」「ブランチ名/コミット範囲」のいずれかを根拠にする。
+- 根拠が不足する場合は、不明と明記し、追加情報を要求する。
+
+# 入力（ユーザーがくれるもの）
+- Notion URL（既に提示済み）
+- GitHub情報（次のどれかが必要）
+  - リポジトリURL（例: https://github.com/org/repo ）
+  - 比較URL（例: .../compare/main...feature ）
+  - PR URL（例: .../pull/123 ）
+  - issue URL（例: .../issues/123 ）
+- Notion側の現状（以下のいずれか）
+  - Notionページの該当部分をコピペ
+  - NotionのMarkdown/HTMLエクスポートを添付
+  - Notion DBのCSVエクスポートを添付（xanが使えるなら推奨）
+
+# 進め方（標準フロー）
+Step A: Notion現状を取得
+- Notionの内容がこの会話で読めない場合は、ユーザーに「差分対象の現状」を貼ってもらう
+- DBの場合は最低限、比較キー（例: issue番号/PR番号/commit/タイトル）を含む行が必要
+
+Step B: GitHub最新を取得
+- ユーザー提示のURL/範囲で、差分（新規/更新/クローズなど）を列挙する
+- “いつ時点の最新か”を明記する（取得時点）
+
+Step C: 差分抽出
+- Notion側に「存在しない/古い」項目を差分として抽出
+- 差分は「追加/更新/終了（クローズ）」など分類する
+
+Step D: Notion貼り付け用の追加テキストを生成
+- 1差分 = 1レコードとして、Notionに貼れるMarkdownを出力
+- 各レコード内に、必ずユーザー指定テンプレートを含める
+
+# 出力ルール
+- 表形式が必要な場合はTSV（コードブロック、1行1レコード、省略禁止）
+- Notionへ貼る本文はMarkdownで出力（省略禁止）
+- 不明な項目は「不明/確認できない」と明記
+
+# ユーザー指定テンプレート（必ず各差分に含める）
+以下を各差分レコードの末尾に付与する（内容はそのまま。必要なら差分内容に合わせてタイトルや文脈だけ差し替える。ただし推測で内容変更しない）。
+
+# 🔬 次回再発防止策
+
+**防止層**: Unit Test
+
+**品質ピラミッド階層配分**: **Unit Test（70%）** + **Integration Test（20%）** + **Visual Regression Test（10%）**
+
+**階層選定理由**:
+
+1. **Unit Testが主力（70%）**:
+    - テーマ定義は独立したモジュール → 外部依存なしでテスト可能
+    - カラースキーマ構造のバリデーションは高速に実行できる
+    - TypeScript型チェックとスキーマ検証はコンパイル時に検知可能
+    - テストの実行速度が速く、CI/CDで毎回実行できる
+2. **Integration Testが補助（20%）**:
+    - Chakra UIとの実際の連携動作を確認
+    - コンポーネントレンダリング時の色適用を検証
+    - ブラウザDOM上での実際の描画結果を確認
+3. **Visual Regression Testが最終防御（10%）**:
+    - 人間の目で気づく視覚的な問題を自動検知
+    - スクリーンショット比較で色の変化を検出
+    - 実行コストが高いため、主要画面のみに限定
+
+**方針**:
+
+- カラースキーマ定義のバリデーションテストを追加
+- Chakra UI互換性チェックをCI/CDパイプラインに組み込み
+- TypeScript型定義でカラースケール構造を強制
+
+# 📋 レグレッションテストマージ判断
+
+**判断**: High（推奨）
+
+**理由**:
+
+- 管理画面の主要UI要素（削除ボタン、警告表示）に影響
+- 視覚的な問題で気づきにくく、ユーザー体験に直接影響
+- 9ファイル18箇所と影響範囲が広い
+
+# 🧪 追加テストコード
+
+\`\`\`tsx
+// typescript/apps/admin/theme/adminColors.test.ts
+import { adminColors } from './adminColors';
+
+describe('adminColors', () => {
+  it('should have Chakra UI compatible color scale for red', () => {
+    expect(adminColors.red).toBeDefined();
+    expect(typeof adminColors.red).toBe('object');
+    expect(adminColors.red[500]).toBeDefined();
+    expect(typeof adminColors.red[500]).toBe('string');
+    expect(adminColors.red[500]).toMatch(/^#[0-9A-F]{6}$/i);
+  });
+
+  it('should support all common color scale keys', () => {
+    const expectedKeys = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900];
+    expectedKeys.forEach(key => {
+      if (adminColors.red[key]) {
+        expect(typeof adminColors.red[key]).toBe('string');
+      }
+    });
+  });
+});
+\`\`\``;
 const DEFECT_TO_STORY_PROMPT = `指定した Epic 配下に、EZ Test の Defect を基にしたバグ Story を作成してください。
 
 - EZ Test Defect URL: <PASTE_DEFECT_URL_HERE>
@@ -302,6 +555,36 @@ export const sessionPresets: Array<{
     label: "🚀 Server Launch",
     initialMessage: SERVER_START_PROMPT,
     colorHex: "#FB8C00",
+  },
+  {
+    id: "admin-app",
+    label: "Admin App",
+    initialMessage: ADMIN_APP_PROMPT,
+    colorHex: "#1976D2",
+  },
+  {
+    id: "backend-api-start",
+    label: "Backend API起動",
+    initialMessage: BACKEND_API_START_PROMPT,
+    colorHex: "#3949AB",
+  },
+  {
+    id: "monorepo-management",
+    label: "Monorepo管理",
+    initialMessage: MONOREPO_MANAGEMENT_PROMPT,
+    colorHex: "#6D4C41",
+  },
+  {
+    id: "customer-app-development",
+    label: "Customer App開発",
+    initialMessage: CUSTOMER_APP_DEVELOPMENT_PROMPT,
+    colorHex: "#00897B",
+  },
+  {
+    id: "admin-app-start",
+    label: "Admin App起動",
+    initialMessage: ADMIN_APP_START_PROMPT,
+    colorHex: "#5E35B1",
   },
   {
     id: "bug-collection",

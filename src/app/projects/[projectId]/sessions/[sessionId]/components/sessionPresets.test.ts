@@ -3,10 +3,15 @@ import { getSessionPresetById, sessionPresets } from "./sessionPresets";
 
 describe("sessionPresets", () => {
   it("provides fixed presets", () => {
-    expect(sessionPresets).toHaveLength(6);
+    expect(sessionPresets).toHaveLength(11);
     expect(sessionPresets.map((preset) => preset.label)).toEqual([
       "Latest Sync",
       "🚀 Server Launch",
+      "Admin App",
+      "Backend API起動",
+      "Monorepo管理",
+      "Customer App開発",
+      "Admin App起動",
       "🗂️ Bug収集",
       "📝 テストケース作成",
       "🐞 DefectをStory化",
@@ -23,6 +28,24 @@ describe("sessionPresets", () => {
     );
     expect(getSessionPresetById("test-case-review")?.initialMessage).toContain(
       "name: qa-review",
+    );
+    expect(getSessionPresetById("admin-app")?.initialMessage).toContain(
+      "npm run dev:local  # http://localhost:3001",
+    );
+    expect(
+      getSessionPresetById("monorepo-management")?.initialMessage,
+    ).toContain("npm run format");
+    expect(
+      getSessionPresetById("customer-app-development")?.initialMessage,
+    ).toContain("npm run dev:remote");
+    expect(getSessionPresetById("admin-app-start")?.initialMessage).toContain(
+      "typescript/apps/admin/",
+    );
+    expect(getSessionPresetById("backend-api-start")?.initialMessage).toContain(
+      "make test-local",
+    );
+    expect(getSessionPresetById("bug-collection")?.initialMessage).toContain(
+      "name: bug-collect",
     );
     expect(getSessionPresetById("unknown")).toBeUndefined();
   });
