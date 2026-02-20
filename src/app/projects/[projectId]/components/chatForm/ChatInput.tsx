@@ -545,6 +545,33 @@ export const ChatInput: FC<ChatInputProps> = ({
               </div>
 
               <div className="flex items-center gap-2">
+                <Button
+                  onClick={handleSubmit}
+                  disabled={
+                    (!message.trim() && attachedFiles.length === 0) ||
+                    isPending ||
+                    disabled
+                  }
+                  size={buttonSize}
+                  className="gap-2 px-6 h-9 transition-all duration-300 shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] bg-pink-500 hover:bg-pink-400 text-white disabled:bg-muted disabled:text-muted-foreground disabled:shadow-none"
+                >
+                  {isPending ? (
+                    <>
+                      <LoaderIcon className="w-4 h-4 animate-spin" />
+                      <span className="hidden sm:inline font-medium">
+                        <Trans id="chat.status.processing" />
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <SendIcon className="w-4 h-4" />
+                      <span className="hidden sm:inline font-medium">
+                        {buttonText}
+                      </span>
+                    </>
+                  )}
+                </Button>
+
                 {enableScheduledSend && sendMode === "immediate" && (
                   <div className="hidden sm:flex items-center gap-2">
                     <Label
@@ -592,33 +619,6 @@ export const ChatInput: FC<ChatInputProps> = ({
                     </span>
                   </Button>
                 )}
-
-                <Button
-                  onClick={handleSubmit}
-                  disabled={
-                    (!message.trim() && attachedFiles.length === 0) ||
-                    isPending ||
-                    disabled
-                  }
-                  size={buttonSize}
-                  className="gap-2 px-6 h-9 transition-all duration-300 shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 disabled:from-muted disabled:to-muted disabled:shadow-none bg-[length:200%_auto] hover:bg-[position:right_center]"
-                >
-                  {isPending ? (
-                    <>
-                      <LoaderIcon className="w-4 h-4 animate-spin" />
-                      <span className="hidden sm:inline font-medium">
-                        <Trans id="chat.status.processing" />
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <SendIcon className="w-4 h-4" />
-                      <span className="hidden sm:inline font-medium">
-                        {buttonText}
-                      </span>
-                    </>
-                  )}
-                </Button>
               </div>
             </div>
           </div>
