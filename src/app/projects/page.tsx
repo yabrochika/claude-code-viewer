@@ -1,5 +1,6 @@
 import { Trans } from "@lingui/react";
 import { type FC, Suspense } from "react";
+import { AddWorktreeDialog } from "./components/AddWorktreeDialog";
 import { ProjectList } from "./components/ProjectList";
 import { SetupProjectDialog } from "./components/SetupProjectDialog";
 
@@ -20,7 +21,10 @@ export const ProjectsPage: FC = () => {
                 <h2 className="text-xl font-semibold">
                   <Trans id="projects.page.title" />
                 </h2>
-                <SetupProjectDialog />
+                <div className="flex items-center gap-2">
+                  <AddWorktreeDialog />
+                  <SetupProjectDialog />
+                </div>
               </div>
               <Suspense
                 fallback={

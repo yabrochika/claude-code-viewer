@@ -8,6 +8,12 @@ export const CommitRequestSchema = z.object({
 });
 
 export const CommitAndPushRequestSchema = CommitRequestSchema;
+export const CreateWorktreeRequestSchema = z.object({
+  repositoryPath: z.string().min(1),
+  worktreeName: z.string().trim().min(1),
+  baseBranch: z.string().trim().min(1),
+  targetPath: z.string().min(1),
+});
 
 // Response Schemas - Commit
 
@@ -104,10 +110,30 @@ export const CommitAndPushResultSchema = z.discriminatedUnion("success", [
   CommitAndPushResultErrorSchema,
 ]);
 
+export const CreateWorktreeResultSuccessSchema = z.object({
+  success: z.literal(true),
+  repositoryPath: z.string(),
+  branchName: z.string(),
+  baseBranch: z.string(),
+  targetPath: z.string(),
+});
+
+export const CreateWorktreeResultErrorSchema = z.object({
+  success: z.literal(false),
+  error: z.string(),
+  details: z.string().optional(),
+});
+
+export const CreateWorktreeResultSchema = z.discriminatedUnion("success", [
+  CreateWorktreeResultSuccessSchema,
+  CreateWorktreeResultErrorSchema,
+]);
+
 // Type Exports
 
 export type CommitRequest = z.infer<typeof CommitRequestSchema>;
 export type CommitAndPushRequest = z.infer<typeof CommitAndPushRequestSchema>;
+export type CreateWorktreeRequest = z.infer<typeof CreateWorktreeRequestSchema>;
 
 export type CommitResultSuccess = z.infer<typeof CommitResultSuccessSchema>;
 export type CommitResultError = z.infer<typeof CommitResultErrorSchema>;
@@ -124,6 +150,13 @@ export type CommitAndPushResultError = z.infer<
   typeof CommitAndPushResultErrorSchema
 >;
 export type CommitAndPushResult = z.infer<typeof CommitAndPushResultSchema>;
+export type CreateWorktreeResultSuccess = z.infer<
+  typeof CreateWorktreeResultSuccessSchema
+>;
+export type CreateWorktreeResultError = z.infer<
+  typeof CreateWorktreeResultErrorSchema
+>;
+export type CreateWorktreeResult = z.infer<typeof CreateWorktreeResultSchema>;
 
 export type CommitErrorCode = CommitResultError["errorCode"];
 export type PushErrorCode = PushResultError["errorCode"];

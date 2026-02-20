@@ -6,7 +6,10 @@ import { AgentSessionController } from "../../core/agent-session/presentation/Ag
 import { ClaudeCodeController } from "../../core/claude-code/presentation/ClaudeCodeController";
 import { FileSystemController } from "../../core/file-system/presentation/FileSystemController";
 import { GitController } from "../../core/git/presentation/GitController";
-import { CommitRequestSchema } from "../../core/git/schema";
+import {
+  CommitRequestSchema,
+  CreateWorktreeRequestSchema,
+} from "../../core/git/schema";
 import { ProjectController } from "../../core/project/presentation/ProjectController";
 import { SessionController } from "../../core/session/presentation/SessionController";
 import { effectToResponse } from "../../lib/effect/toEffectResponse";
@@ -64,6 +67,21 @@ const projectRoutes = Effect.gen(function* () {
             c,
             projectController
               .createProject({
+                ...c.req.valid("json"),
+              })
+              .pipe(Effect.provide(runtime)),
+          );
+          return response;
+        },
+      )
+      .post(
+        "/worktrees",
+        zValidator("json", CreateWorktreeRequestSchema),
+        async (c) => {
+          const response = await effectToResponse(
+            c,
+            gitController
+              .createWorktree({
                 ...c.req.valid("json"),
               })
               .pipe(Effect.provide(runtime)),

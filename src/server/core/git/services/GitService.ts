@@ -394,6 +394,34 @@ const LayerImpl = Effect.gen(function* () {
       return { success: true, branch: branchName };
     });
 
+  const createWorktree = (options: {
+    repositoryPath: string;
+    worktreeName: string;
+    baseBranch: string;
+    targetPath: string;
+  }) =>
+    Effect.gen(function* () {
+      const { repositoryPath, worktreeName, baseBranch, targetPath } = options;
+      yield* execGitCommand(
+        [
+          "worktree",
+          "add",
+          "-b",
+          worktreeName,
+          targetPath,
+          `origin/${baseBranch}`,
+        ],
+        repositoryPath,
+      );
+      return {
+        success: true,
+        repositoryPath,
+        branchName: worktreeName,
+        baseBranch,
+        targetPath,
+      };
+    });
+
   return {
     getBranches,
     getCurrentBranch,
@@ -409,6 +437,7 @@ const LayerImpl = Effect.gen(function* () {
     findBaseBranch,
     getCommitsBetweenBranches,
     checkout,
+    createWorktree,
   };
 });
 

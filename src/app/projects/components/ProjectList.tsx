@@ -1,13 +1,11 @@
 import { Trans } from "@lingui/react";
 import { Link } from "@tanstack/react-router";
-import { FolderIcon } from "lucide-react";
+import { CalendarDaysIcon, FolderIcon, MessagesSquareIcon } from "lucide-react";
 import type { FC } from "react";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { formatLocaleDate } from "../../../lib/date/formatLocaleDate";
@@ -35,45 +33,53 @@ export const ProjectList: FC = () => {
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div className="space-y-4">
       {projects.map((project) => (
-        <Card key={project.id} className="hover:shadow-md transition-shadow">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 justify-start items-start">
-              <FolderIcon className="w-5 h-5 flex-shrink-0" />
-              <span className="text-wrap flex-1">
-                {project.meta.projectName ?? project.claudeProjectPath}
-              </span>
-            </CardTitle>
-            {project.meta.projectPath ? (
-              <CardDescription>{project.meta.projectPath}</CardDescription>
-            ) : null}
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <p className="text-sm text-muted-foreground">
-              <Trans id="project_list.last_modified" />{" "}
-              {project.lastModifiedAt
-                ? formatLocaleDate(project.lastModifiedAt, {
-                    locale: config.locale,
-                    target: "time",
-                  })
-                : ""}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              <Trans id="project_list.messages" /> {project.meta.sessionCount}
-            </p>
-          </CardContent>
-          <CardContent className="pt-0">
-            <Button asChild className="w-full">
-              <Link
-                to={"/projects/$projectId/session"}
-                params={{ projectId: project.id }}
-              >
-                <Trans id="project_list.view_conversations" />
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
+        <Link
+          key={project.id}
+          to={"/projects/$projectId/session"}
+          params={{ projectId: project.id }}
+          className="block"
+        >
+          <Card className="transition-colors hover:bg-muted/20">
+            <CardContent className="py-5">
+              <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0 flex-1 space-y-2">
+                  <CardTitle className="flex items-center gap-2 justify-start items-start text-base">
+                    <FolderIcon className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                    <span className="text-wrap flex-1">
+                      {project.meta.projectName ?? project.claudeProjectPath}
+                    </span>
+                  </CardTitle>
+                  <CardDescription className="line-clamp-1">
+                    {project.meta.projectPath ?? project.claudeProjectPath}
+                  </CardDescription>
+                </div>
+
+                <div className="flex items-center gap-4 text-xs text-muted-foreground shrink-0">
+                  <div className="flex items-center gap-1.5">
+                    <MessagesSquareIcon className="w-3.5 h-3.5" />
+                    <span>
+                      <Trans id="project_list.messages" />{" "}
+                      {project.meta.sessionCount}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <CalendarDaysIcon className="w-3.5 h-3.5" />
+                    <span>
+                      {project.lastModifiedAt
+                        ? formatLocaleDate(project.lastModifiedAt, {
+                            locale: config.locale,
+                            target: "time",
+                          })
+                        : "-"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
       ))}
     </div>
   );

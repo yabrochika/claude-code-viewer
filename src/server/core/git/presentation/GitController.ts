@@ -453,6 +453,35 @@ const LayerImpl = Effect.gen(function* () {
       } as const satisfies ControllerResponse;
     });
 
+  const createWorktree = (options: {
+    repositoryPath: string;
+    worktreeName: string;
+    baseBranch: string;
+    targetPath: string;
+  }) =>
+    Effect.gen(function* () {
+      const createResult = yield* Effect.either(
+        gitService.createWorktree(options),
+      );
+
+      if (Either.isLeft(createResult)) {
+        const error = createResult.left;
+        return {
+          response: {
+            success: false,
+            error: "Failed to create worktree",
+            details: "message" in error ? String(error.message) : undefined,
+          },
+          status: 200,
+        } as const satisfies ControllerResponse;
+      }
+
+      return {
+        response: createResult.right,
+        status: 200,
+      } as const satisfies ControllerResponse;
+    });
+
   return {
     getGitDiff,
     commitFiles,
@@ -461,6 +490,7 @@ const LayerImpl = Effect.gen(function* () {
     getCurrentRevisions,
     getBranches,
     checkoutBranch,
+    createWorktree,
   };
 });
 
