@@ -21,6 +21,9 @@ describe("sessionPresets", () => {
     expect(getSessionPresetById("server-start")?.initialMessage).toContain(
       "## 🚀 クイックスタート",
     );
+    expect(getSessionPresetById("test-case-review")?.initialMessage).toContain(
+      "name: qa-review",
+    );
     expect(getSessionPresetById("unknown")).toBeUndefined();
   });
 });
