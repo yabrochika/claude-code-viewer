@@ -19,12 +19,15 @@ const toPosixPath = (value: string) => value.replace(/\\/g, "/");
 const LayerImpl = Effect.gen(function* () {
   const fs = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
+  const toFsPath = (value: string) =>
+    path.sep === "\\" ? value.replace(/\//g, "\\") : value.replace(/\\/g, "/");
   const sessionMetaService = yield* SessionMetaService;
   const virtualConversationDatabase = yield* VirtualConversationDatabase;
 
   const getSession = (projectId: string, sessionId: string) =>
     Effect.gen(function* () {
       const sessionPath = decodeSessionId(projectId, sessionId);
+      const sessionPathForFs = toFsPath(sessionPath);
 
       const virtualConversation =
         yield* virtualConversationDatabase.getSessionVirtualConversation(
@@ -32,17 +35,17 @@ const LayerImpl = Effect.gen(function* () {
         );
 
       // Check if session file exists
-      const exists = yield* fs.exists(sessionPath);
+      const exists = yield* fs.exists(sessionPathForFs);
       const sessionDetail = yield* exists
         ? Effect.gen(function* () {
             // Read session file
-            const content = yield* fs.readFileString(sessionPath);
+            const content = yield* fs.readFileString(sessionPathForFs);
             const allLines = content.split("\n").filter((line) => line.trim());
 
             const conversations = parseJsonl(allLines.join("\n"));
 
             // Get file stats
-            const stat = yield* fs.stat(sessionPath);
+            const stat = yield* fs.stat(sessionPathForFs);
 
             // Get session metadata
             const meta = yield* sessionMetaService.getSessionMeta(

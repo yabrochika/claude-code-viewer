@@ -8,6 +8,7 @@ import {
 import { testPlatformLayer } from "../../../../testing/layers/testPlatformLayer";
 import { decodeProjectId, encodeProjectId } from "../../project/functions/id";
 import type { ErrorJsonl, SessionDetail, SessionMeta } from "../../types";
+import { decodeSessionId } from "../functions/id";
 import { SessionRepository } from "../infrastructure/SessionRepository";
 import { VirtualConversationDatabase } from "../infrastructure/VirtualConversationDatabase";
 import { SessionMetaService } from "../services/SessionMetaService";
@@ -54,6 +55,69 @@ const testPredictSessionsDatabaseLayer = (
 
 describe("SessionRepository", () => {
   describe("getSession", () => {
+    it("uses native filesystem path for session file operations", async () => {
+      const projectPath = "C:\\test\\project";
+      const projectId = encodeProjectId(projectPath);
+      const sessionId = "windows-session";
+      const rawDecodedPath = decodeSessionId(projectId, sessionId);
+      const observedPaths: Array<string> = [];
+
+      const SessionMetaServiceMock = testSessionMetaServiceLayer(
+        createMockSessionMeta({
+          messageCount: 1,
+          firstUserMessage: null,
+        }),
+      );
+      const PredictSessionsDatabaseMock = testPredictSessionsDatabaseLayer(
+        new Map(),
+      );
+
+      const program = Effect.gen(function* () {
+        const repo = yield* SessionRepository;
+        return yield* repo.getSession(projectId, sessionId);
+      });
+
+      await Effect.runPromise(
+        program.pipe(
+          Effect.provide(SessionRepository.Live),
+          Effect.provide(SessionMetaServiceMock),
+          Effect.provide(PredictSessionsDatabaseMock),
+          Effect.provide(
+            testFileSystemLayer({
+              exists: (path) => {
+                observedPaths.push(path);
+                return Effect.succeed(true);
+              },
+              readFileString: (path) => {
+                observedPaths.push(path);
+                return Effect.succeed(
+                  '{"type":"user","message":{"role":"user","content":"Hello"}}',
+                );
+              },
+              stat: (path) => {
+                observedPaths.push(path);
+                return Effect.succeed(
+                  createFileInfo({
+                    type: "File",
+                    mtime: Option.some(new Date("2024-01-01T00:00:00.000Z")),
+                  }),
+                );
+              },
+            }),
+          ),
+          Effect.provide(testPlatformLayer()),
+        ),
+      );
+
+      expect(observedPaths.length).toBeGreaterThan(0);
+      expect(
+        observedPaths.every(
+          (path) => !(path.includes("\\") && path.includes("/")),
+        ),
+      ).toBe(true);
+      expect(observedPaths.every((path) => path !== rawDecodedPath)).toBe(true);
+    });
+
     it("returns session details when session file exists", async () => {
       const projectId = Buffer.from("/test/project").toString("base64url");
       const sessionId = "test-session";
