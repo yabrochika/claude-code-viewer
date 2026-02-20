@@ -6,6 +6,7 @@ import {
   type MessageInput,
   useContinueSessionProcessMutation,
 } from "../../../../components/chatForm";
+import { sessionPresets } from "../sessionPresets";
 
 export const ContinueChat: FC<{
   projectId: string;
@@ -63,6 +64,7 @@ export const ContinueChat: FC<{
         enableScheduledSend={!isRunning}
         baseSessionId={sessionId}
         disabled={isRunning}
+        presets={sessionPresets}
       />
     </div>
   );

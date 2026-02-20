@@ -783,7 +783,7 @@
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        571
+        598
       ]
     ],
     "translation": "立即发送"
@@ -798,7 +798,7 @@
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        554
+        581
       ]
     ],
     "translation": "发送模式"
@@ -813,11 +813,11 @@
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        574
+        601
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        591
+        618
       ]
     ],
     "translation": "定时发送"
@@ -851,7 +851,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        610
+        562
       ]
     ],
     "translation": "处理中..."
@@ -2131,7 +2131,7 @@
     "origin": [
       [
         "src/app/projects/page.tsx",
-        14
+        28
       ]
     ],
     "translation": "查看 Claude Code 对话历史和项目操作"
@@ -2142,7 +2142,7 @@
     "origin": [
       [
         "src/app/projects/page.tsx",
-        33
+        47
       ]
     ],
     "translation": "正在加载项目..."
@@ -2153,7 +2153,7 @@
     "origin": [
       [
         "src/app/projects/page.tsx",
-        22
+        36
       ]
     ],
     "translation": "项目"

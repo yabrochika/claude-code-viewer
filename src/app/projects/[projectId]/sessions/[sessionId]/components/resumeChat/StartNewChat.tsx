@@ -6,6 +6,7 @@ import {
   type MessageInput,
   useCreateSessionProcessMutation,
 } from "../../../../components/chatForm";
+import { sessionPresets } from "../sessionPresets";
 
 export const StartNewChat: FC<{ projectId: string }> = ({ projectId }) => {
   const { i18n } = useLingui();
@@ -52,6 +53,7 @@ export const StartNewChat: FC<{ projectId: string }> = ({ projectId }) => {
         buttonSize="default"
         enableScheduledSend={true}
         enableCCOptions={true}
+        presets={sessionPresets}
       />
     </div>
   );

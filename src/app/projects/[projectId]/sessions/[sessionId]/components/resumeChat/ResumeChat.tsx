@@ -6,6 +6,7 @@ import {
   type MessageInput,
   useCreateSessionProcessMutation,
 } from "../../../../components/chatForm";
+import { sessionPresets } from "../sessionPresets";
 
 export const ResumeChat: FC<{
   projectId: string;
@@ -61,6 +62,7 @@ export const ResumeChat: FC<{
         enableScheduledSend={true}
         baseSessionId={sessionId}
         enableCCOptions={true}
+        presets={sessionPresets}
       />
     </div>
   );

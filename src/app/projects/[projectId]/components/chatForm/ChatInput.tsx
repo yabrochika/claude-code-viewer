@@ -49,6 +49,13 @@ export interface MessageInput {
   forkSession?: boolean;
 }
 
+export interface ChatInputPreset {
+  id: string;
+  label: string;
+  initialMessage: string;
+  colorHex: string;
+}
+
 export interface ChatInputProps {
   projectId: string;
   onSubmit: (input: MessageInput) => Promise<void>;
@@ -63,6 +70,7 @@ export interface ChatInputProps {
   enableScheduledSend?: boolean;
   baseSessionId?: string | null;
   enableCCOptions?: boolean;
+  presets?: ChatInputPreset[];
 }
 
 export const ChatInput: FC<ChatInputProps> = ({
@@ -79,6 +87,7 @@ export const ChatInput: FC<ChatInputProps> = ({
   enableScheduledSend = false,
   baseSessionId = null,
   enableCCOptions = false,
+  presets = [],
 }) => {
   // Parse minHeight prop to get pixel value (default to 48px for 1.5 lines)
   // Supports both "200px" and Tailwind format like "min-h-[200px]"
@@ -383,6 +392,11 @@ export const ChatInput: FC<ChatInputProps> = ({
     textareaRef.current?.focus();
   };
 
+  const handlePresetClick = (initialMessage: string) => {
+    setMessage(initialMessage);
+    textareaRef.current?.focus();
+  };
+
   return (
     <div className={containerClassName}>
       {error && (
@@ -391,6 +405,32 @@ export const ChatInput: FC<ChatInputProps> = ({
           <span className="font-medium">
             <Trans id="chat.error.send_failed" />
           </span>
+        </div>
+      )}
+
+      {presets.length > 0 && (
+        <div className="mb-2 space-y-1.5">
+          <p className="text-[11px] font-medium text-muted-foreground">
+            Preset
+          </p>
+          <div className="flex items-center gap-2 overflow-x-auto pb-1">
+            {presets.map((preset) => (
+              <button
+                key={preset.id}
+                type="button"
+                onClick={() => handlePresetClick(preset.initialMessage)}
+                disabled={isPending || disabled}
+                className="inline-flex shrink-0 items-center rounded-full border px-3 py-1 text-xs font-medium transition-opacity disabled:cursor-not-allowed"
+                style={{
+                  borderColor: `${preset.colorHex}88`,
+                  backgroundColor: `${preset.colorHex}26`,
+                  color: preset.colorHex,
+                }}
+              >
+                {preset.label}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
@@ -545,33 +585,6 @@ export const ChatInput: FC<ChatInputProps> = ({
               </div>
 
               <div className="flex items-center gap-2">
-                <Button
-                  onClick={handleSubmit}
-                  disabled={
-                    (!message.trim() && attachedFiles.length === 0) ||
-                    isPending ||
-                    disabled
-                  }
-                  size={buttonSize}
-                  className="gap-2 px-6 h-9 transition-all duration-300 shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] bg-pink-500 hover:bg-pink-400 text-white disabled:bg-muted disabled:text-muted-foreground disabled:shadow-none"
-                >
-                  {isPending ? (
-                    <>
-                      <LoaderIcon className="w-4 h-4 animate-spin" />
-                      <span className="hidden sm:inline font-medium">
-                        <Trans id="chat.status.processing" />
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <SendIcon className="w-4 h-4" />
-                      <span className="hidden sm:inline font-medium">
-                        {buttonText}
-                      </span>
-                    </>
-                  )}
-                </Button>
-
                 {enableScheduledSend && sendMode === "immediate" && (
                   <div className="hidden sm:flex items-center gap-2">
                     <Label
@@ -619,6 +632,33 @@ export const ChatInput: FC<ChatInputProps> = ({
                     </span>
                   </Button>
                 )}
+
+                <Button
+                  onClick={handleSubmit}
+                  disabled={
+                    (!message.trim() && attachedFiles.length === 0) ||
+                    isPending ||
+                    disabled
+                  }
+                  size={buttonSize}
+                  className="gap-2 px-6 h-9 transition-all duration-300 shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] bg-pink-500 hover:bg-pink-400 text-white disabled:bg-muted disabled:text-muted-foreground disabled:shadow-none"
+                >
+                  {isPending ? (
+                    <>
+                      <LoaderIcon className="w-4 h-4 animate-spin" />
+                      <span className="hidden sm:inline font-medium">
+                        <Trans id="chat.status.processing" />
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <SendIcon className="w-4 h-4" />
+                      <span className="hidden sm:inline font-medium">
+                        {buttonText}
+                      </span>
+                    </>
+                  )}
+                </Button>
               </div>
             </div>
           </div>
