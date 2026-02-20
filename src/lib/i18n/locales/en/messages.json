@@ -941,7 +941,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        190
+        192
       ]
     ],
     "translation": "Loading..."
@@ -2083,7 +2083,7 @@
     "origin": [
       [
         "src/app/projects/components/ProjectList.tsx",
-        76
+        78
       ]
     ],
     "translation": "Messages: "
@@ -2094,7 +2094,7 @@
     "origin": [
       [
         "src/app/projects/components/ProjectList.tsx",
-        40
+        41
       ]
     ],
     "translation": "No Claude Code projects found in your ~/.claude/projects directory. Start a conversation with Claude Code to set up your first project."
@@ -2105,7 +2105,7 @@
     "origin": [
       [
         "src/app/projects/components/ProjectList.tsx",
-        37
+        38
       ]
     ],
     "translation": "No Projects Found"
@@ -2752,7 +2752,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        153
+        155
       ]
     ],
     "translation": "Paused"
@@ -2771,7 +2771,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        151
+        153
       ]
     ],
     "translation": "Running"
@@ -2786,7 +2786,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        192
+        194
       ]
     ],
     "translation": "Load More"

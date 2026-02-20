@@ -941,7 +941,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        190
+        192
       ]
     ],
     "translation": "加载中..."
@@ -2083,7 +2083,7 @@
     "origin": [
       [
         "src/app/projects/components/ProjectList.tsx",
-        76
+        78
       ]
     ],
     "translation": "消息数:"
@@ -2094,7 +2094,7 @@
     "origin": [
       [
         "src/app/projects/components/ProjectList.tsx",
-        40
+        41
       ]
     ],
     "translation": "在您的 ~/.claude/projects 目录中未找到 Claude Code 项目。与 Claude Code 开始对话以创建您的第一个项目。"
@@ -2105,7 +2105,7 @@
     "origin": [
       [
         "src/app/projects/components/ProjectList.tsx",
-        37
+        38
       ]
     ],
     "translation": "未找到项目"
@@ -2752,7 +2752,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        153
+        155
       ]
     ],
     "translation": "已暂停"
@@ -2771,7 +2771,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        151
+        153
       ]
     ],
     "translation": "运行中"
@@ -2786,7 +2786,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        192
+        194
       ]
     ],
     "translation": "加载更多"
