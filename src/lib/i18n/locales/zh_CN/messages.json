@@ -146,7 +146,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        468
+        514
       ]
     ],
     "translation": "带补全支持的消息输入"
@@ -545,17 +545,6 @@
     ],
     "translation": "响应时间"
   },
-  "chat.attach_file": {
-    "placeholders": {},
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        564
-      ]
-    ],
-    "translation": "附加"
-  },
   "chat.button.start": {
     "placeholders": {},
     "comments": [],
@@ -573,7 +562,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        406
+        407
       ]
     ],
     "translation": "发送消息失败。请重试。"
@@ -733,7 +722,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        245
+        246
       ]
     ],
     "translation": "定时发送消息失败"
@@ -745,7 +734,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        229
+        230
       ]
     ],
     "translation": "消息定时发送成功"
@@ -757,7 +746,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        234
+        235
       ]
     ],
     "translation": "您可以在定时任务选项卡中查看和管理"
@@ -779,11 +768,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        521
+        567
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        611
+        627
       ]
     ],
     "translation": "立即发送"
@@ -794,11 +783,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        504
+        550
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        594
+        610
       ]
     ],
     "translation": "发送模式"
@@ -809,15 +798,15 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        524
+        570
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        614
+        630
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        631
+        647
       ]
     ],
     "translation": "定时发送"
@@ -828,7 +817,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        531
+        577
       ]
     ],
     "translation": "定时发送时间"
@@ -851,7 +840,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        650
+        666
       ]
     ],
     "translation": "处理中..."
@@ -2098,7 +2087,7 @@
     "origin": [
       [
         "src/app/projects/components/ProjectList.tsx",
-        63
+        76
       ]
     ],
     "translation": "消息数:"
@@ -2109,7 +2098,7 @@
     "origin": [
       [
         "src/app/projects/components/ProjectList.tsx",
-        29
+        40
       ]
     ],
     "translation": "在您的 ~/.claude/projects 目录中未找到 Claude Code 项目。与 Claude Code 开始对话以创建您的第一个项目。"
@@ -2120,7 +2109,7 @@
     "origin": [
       [
         "src/app/projects/components/ProjectList.tsx",
-        26
+        37
       ]
     ],
     "translation": "未找到项目"

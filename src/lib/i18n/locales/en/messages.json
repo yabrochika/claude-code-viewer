@@ -146,7 +146,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        468
+        514
       ]
     ],
     "translation": "Message input with autocomplete support"
@@ -545,17 +545,6 @@
     ],
     "translation": "Turn duration"
   },
-  "chat.attach_file": {
-    "placeholders": {},
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        564
-      ]
-    ],
-    "translation": "Attach"
-  },
   "chat.button.start": {
     "placeholders": {},
     "comments": [],
@@ -573,7 +562,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        406
+        407
       ]
     ],
     "translation": "Failed to send message. Please try again."
@@ -733,7 +722,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        245
+        246
       ]
     ],
     "translation": "Failed to schedule message"
@@ -745,7 +734,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        229
+        230
       ]
     ],
     "translation": "Message scheduled successfully"
@@ -757,7 +746,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        234
+        235
       ]
     ],
     "translation": "You can view and manage it in the Scheduler tab"
@@ -779,11 +768,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        521
+        567
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        611
+        627
       ]
     ],
     "translation": "Send Now"
@@ -794,11 +783,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        504
+        550
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        594
+        610
       ]
     ],
     "translation": "Send Mode"
@@ -809,15 +798,15 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        524
+        570
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        614
+        630
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        631
+        647
       ]
     ],
     "translation": "Schedule Send"
@@ -828,7 +817,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        531
+        577
       ]
     ],
     "translation": "Scheduled Send Time"
@@ -851,7 +840,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        650
+        666
       ]
     ],
     "translation": "Processing..."
@@ -2098,7 +2087,7 @@
     "origin": [
       [
         "src/app/projects/components/ProjectList.tsx",
-        63
+        76
       ]
     ],
     "translation": "Messages: "
@@ -2109,7 +2098,7 @@
     "origin": [
       [
         "src/app/projects/components/ProjectList.tsx",
-        29
+        40
       ]
     ],
     "translation": "No Claude Code projects found in your ~/.claude/projects directory. Start a conversation with Claude Code to set up your first project."
@@ -2120,7 +2109,7 @@
     "origin": [
       [
         "src/app/projects/components/ProjectList.tsx",
-        26
+        37
       ]
     ],
     "translation": "No Projects Found"
