@@ -36,16 +36,19 @@ export const getConfigPath = Effect.gen(function* () {
 
 export const readConfig = Effect.gen(function* () {
   const fs = yield* FileSystem.FileSystem;
+  const path = yield* Path.Path;
   const configPath = yield* getConfigPath;
+  const configPathForFs =
+    path.sep === "\\" ? configPath.replace(/\//g, "\\") : configPath;
 
-  const exists = yield* fs.exists(configPath);
+  const exists = yield* fs.exists(configPathForFs);
   if (!exists) {
     return yield* Effect.fail(
       new ConfigFileNotFoundError({ path: configPath }),
     );
   }
 
-  const content = yield* fs.readFileString(configPath);
+  const content = yield* fs.readFileString(configPathForFs);
 
   const jsonResult = yield* Effect.try({
     try: () => JSON.parse(content),
@@ -75,12 +78,14 @@ export const writeConfig = (config: SchedulerConfig) =>
     const fs = yield* FileSystem.FileSystem;
     const path = yield* Path.Path;
     const configPath = yield* getConfigPath;
-    const configDir = path.dirname(configPath);
+    const configPathForFs =
+      path.sep === "\\" ? configPath.replace(/\//g, "\\") : configPath;
+    const configDir = path.dirname(configPathForFs);
 
     yield* fs.makeDirectory(configDir, { recursive: true });
 
     const content = JSON.stringify(config, null, 2);
-    yield* fs.writeFileString(configPath, content);
+    yield* fs.writeFileString(configPathForFs, content);
   });
 
 export const initializeConfig = Effect.gen(function* () {

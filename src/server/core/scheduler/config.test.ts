@@ -5,6 +5,7 @@ import { FileSystem, Path } from "@effect/platform";
 import { NodeFileSystem, NodePath } from "@effect/platform-node";
 import { Effect, Layer } from "effect";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
+import { testFileSystemLayer } from "../../../testing/layers/testFileSystemLayer";
 import {
   getConfigPath,
   initializeConfig,
@@ -59,6 +60,43 @@ describe("scheduler config", () => {
 
     expect(normalizedResult).toContain("/scheduler/schedules.json");
     expect(normalizedResult).toContain(normalizedTestDir);
+  });
+
+  test("readConfig converts path separators before filesystem calls", async () => {
+    const observedPaths: Array<string> = [];
+    const baseDir = "C:/scheduler-test";
+
+    const result = await Effect.runPromise(
+      readConfig.pipe(
+        Effect.provide(
+          testFileSystemLayer({
+            exists: (targetPath) => {
+              observedPaths.push(targetPath);
+              return Effect.succeed(true);
+            },
+            readFileString: (targetPath) => {
+              observedPaths.push(targetPath);
+              return Effect.succeed('{"jobs":[]}');
+            },
+          }),
+        ),
+        Effect.provide(NodePath.layer),
+        Effect.provide(Layer.succeed(SchedulerConfigBaseDir, baseDir)),
+      ),
+    );
+
+    expect(result).toEqual({ jobs: [] });
+    expect(observedPaths.length).toBeGreaterThan(0);
+
+    if (process.platform === "win32") {
+      expect(
+        observedPaths.every((targetPath) => !targetPath.includes("/")),
+      ).toBe(true);
+    } else {
+      expect(
+        observedPaths.every((targetPath) => !targetPath.includes("\\")),
+      ).toBe(true);
+    }
   });
 
   test("writeConfig and readConfig work correctly", async () => {
