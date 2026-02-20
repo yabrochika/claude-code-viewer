@@ -155,9 +155,10 @@ const LayerImpl = Effect.gen(function* () {
       const { maxCount = 20, cursor } = options ?? {};
 
       const claudeProjectPath = decodeProjectId(projectId);
+      const claudeProjectPathForFs = toFsPath(claudeProjectPath);
 
       // Check if project directory exists
-      const dirExists = yield* fs.exists(claudeProjectPath);
+      const dirExists = yield* fs.exists(claudeProjectPathForFs);
       if (!dirExists) {
         console.warn(`Project directory not found at ${claudeProjectPath}`);
         return { sessions: [] };
@@ -165,7 +166,8 @@ const LayerImpl = Effect.gen(function* () {
 
       // Read directory entries with error handling
       const dirents = yield* Effect.tryPromise({
-        try: () => fs.readDirectory(claudeProjectPath).pipe(Effect.runPromise),
+        try: () =>
+          fs.readDirectory(claudeProjectPathForFs).pipe(Effect.runPromise),
         catch: (error) => {
           console.warn(
             `Failed to read sessions for project ${projectId}:`,
@@ -179,8 +181,8 @@ const LayerImpl = Effect.gen(function* () {
       const sessionEffects = dirents.filter(isRegularSessionFile).map((entry) =>
         Effect.gen(function* () {
           const fullPathForFs = normalizeJoinedPathForBase(
-            path.join(claudeProjectPath, entry),
-            claudeProjectPath,
+            path.join(claudeProjectPathForFs, entry),
+            claudeProjectPathForFs,
           );
           const sessionId = encodeSessionId(fullPathForFs);
           const fullPathForResponse = toPosixPath(fullPathForFs);

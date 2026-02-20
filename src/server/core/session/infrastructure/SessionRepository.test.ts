@@ -1,4 +1,6 @@
+import { sep } from "node:path";
 import { SystemError } from "@effect/platform/Error";
+import { NodePath } from "@effect/platform-node";
 import { Effect, Layer, Option } from "effect";
 import type { Conversation } from "../../../../lib/conversation-schema";
 import {
@@ -242,7 +244,7 @@ describe("SessionRepository", () => {
           Effect.provide(SessionMetaServiceMock),
           Effect.provide(PredictSessionsDatabaseMock),
           Effect.provide(FileSystemMock),
-          Effect.provide(testPlatformLayer()),
+          Effect.provide(NodePath.layer),
         ),
       );
 
@@ -327,6 +329,81 @@ describe("SessionRepository", () => {
   });
 
   describe("getSessions", () => {
+    it("uses native filesystem path for project directory operations", async () => {
+      const projectPath = "C:/test/project";
+      const projectId = encodeProjectId(projectPath);
+      const rawDecodedPath = decodeProjectId(projectId);
+      const observedPaths: Array<string> = [];
+
+      const mockMeta: SessionMeta = createMockSessionMeta({
+        messageCount: 1,
+        firstUserMessage: null,
+      });
+
+      const FileSystemMock = testFileSystemLayer({
+        exists: (targetPath: string) => {
+          observedPaths.push(targetPath);
+          return Effect.succeed(true);
+        },
+        readDirectory: (targetPath: string) => {
+          observedPaths.push(targetPath);
+          return Effect.succeed(["session1.jsonl"]);
+        },
+        stat: (targetPath: string) => {
+          observedPaths.push(targetPath);
+          return Effect.succeed(
+            createFileInfo({ mtime: Option.some(new Date()) }),
+          );
+        },
+      });
+
+      const SessionMetaServiceMock = testSessionMetaServiceLayer(mockMeta);
+      const PredictSessionsDatabaseMock = testPredictSessionsDatabaseLayer(
+        new Map(),
+      );
+
+      const program = Effect.gen(function* () {
+        const repo = yield* SessionRepository;
+        return yield* repo.getSessions(projectId);
+      });
+
+      const result = await Effect.runPromise(
+        program.pipe(
+          Effect.provide(SessionRepository.Live),
+          Effect.provide(SessionMetaServiceMock),
+          Effect.provide(PredictSessionsDatabaseMock),
+          Effect.provide(FileSystemMock),
+          Effect.provide(testPlatformLayer()),
+        ),
+      );
+
+      expect(result.sessions).toHaveLength(1);
+      expect(observedPaths.length).toBeGreaterThan(0);
+      expect(
+        observedPaths.every(
+          (targetPath) =>
+            !(targetPath.includes("\\") && targetPath.includes("/")),
+        ),
+      ).toBe(true);
+
+      const hasBackslashes = observedPaths.some((targetPath) =>
+        targetPath.includes("\\"),
+      );
+
+      if (sep === "\\" && hasBackslashes) {
+        expect(
+          observedPaths.every((targetPath) => !targetPath.includes("/")),
+        ).toBe(true);
+        expect(
+          observedPaths.every((targetPath) => targetPath !== rawDecodedPath),
+        ).toBe(true);
+      } else {
+        expect(
+          observedPaths.some((targetPath) => targetPath === rawDecodedPath),
+        ).toBe(true);
+      }
+    });
+
     it("normalizes jsonlFilePath to forward slashes for real and virtual sessions", async () => {
       const windowsProjectPath = "C:\\test\\project";
       const projectId = encodeProjectId(windowsProjectPath);
@@ -339,9 +416,12 @@ describe("SessionRepository", () => {
       });
 
       const FileSystemMock = testFileSystemLayer({
-        exists: (path: string) => Effect.succeed(path === windowsProjectPath),
+        exists: (path: string) =>
+          Effect.succeed(
+            path.replace(/\\/g, "/") === windowsProjectPath.replace(/\\/g, "/"),
+          ),
         readDirectory: (path: string) =>
-          path === windowsProjectPath
+          path.replace(/\\/g, "/") === windowsProjectPath.replace(/\\/g, "/")
             ? Effect.succeed(["session1.jsonl"])
             : Effect.succeed([]),
         stat: () =>
@@ -390,7 +470,7 @@ describe("SessionRepository", () => {
           Effect.provide(SessionMetaServiceMock),
           Effect.provide(PredictSessionsDatabaseMock),
           Effect.provide(FileSystemMock),
-          Effect.provide(testPlatformLayer()),
+          Effect.provide(NodePath.layer),
         ),
       );
 
