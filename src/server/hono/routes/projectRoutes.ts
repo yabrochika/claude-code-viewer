@@ -74,6 +74,17 @@ const projectRoutes = Effect.gen(function* () {
           return response;
         },
       )
+      .delete("/:projectId", async (c) => {
+        const response = await effectToResponse(
+          c,
+          projectController
+            .deleteProject({
+              ...c.req.param(),
+            })
+            .pipe(Effect.provide(runtime)),
+        );
+        return response;
+      })
       .post(
         "/worktrees",
         zValidator("json", CreateWorktreeRequestSchema),

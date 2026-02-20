@@ -160,11 +160,37 @@ const LayerImpl = Effect.gen(function* () {
       } as const satisfies ControllerResponse;
     });
 
+  const deleteProject = (options: { projectId: string }) =>
+    Effect.gen(function* () {
+      const { projectId } = options;
+      const deleteResult = yield* Effect.either(
+        projectRepository.deleteProject(projectId),
+      );
+
+      if (deleteResult._tag === "Left") {
+        const isNotFound = deleteResult.left.message === "Project not found";
+        return {
+          status: isNotFound ? 404 : 500,
+          response: {
+            error: isNotFound
+              ? "Project not found"
+              : `Failed to delete project: ${deleteResult.left.message}`,
+          },
+        } as const satisfies ControllerResponse;
+      }
+
+      return {
+        status: 200,
+        response: { success: true },
+      } as const satisfies ControllerResponse;
+    });
+
   return {
     getProjects,
     getProject,
     getProjectLatestSession,
     createProject,
+    deleteProject,
   };
 });
 

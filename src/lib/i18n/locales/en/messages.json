@@ -146,7 +146,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        428
+        468
       ]
     ],
     "translation": "Message input with autocomplete support"
@@ -551,7 +551,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        524
+        564
       ]
     ],
     "translation": "Attach"
@@ -562,7 +562,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
-        50
+        51
       ]
     ],
     "translation": "Start Chat"
@@ -573,7 +573,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        392
+        406
       ]
     ],
     "translation": "Failed to send message. Please try again."
@@ -638,11 +638,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        37
+        38
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
-        29
+        30
       ]
     ],
     "translation": "Type your message... (Start with / for commands, @ for files, Command+Enter to send)"
@@ -654,11 +654,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        30
+        31
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
-        22
+        23
       ]
     ],
     "translation": "Type your message... (Start with / for commands, @ for files, Enter to send)"
@@ -670,11 +670,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        43
+        44
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
-        35
+        36
       ]
     ],
     "translation": "Type your message... (Start with / for commands, @ for files, Shift+Enter to send)"
@@ -686,7 +686,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ResumeChat.tsx",
-        35
+        36
       ]
     ],
     "translation": "Type your message... (Start with / for commands, @ for files, Command+Enter to send)"
@@ -698,7 +698,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ResumeChat.tsx",
-        28
+        29
       ]
     ],
     "translation": "Type your message... (Start with / for commands, @ for files, Enter to send)"
@@ -710,7 +710,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ResumeChat.tsx",
-        41
+        42
       ]
     ],
     "translation": "Type your message... (Start with / for commands, @ for files, Shift+Enter to send)"
@@ -721,7 +721,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ResumeChat.tsx",
-        48
+        49
       ]
     ],
     "translation": "Resume"
@@ -733,7 +733,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        236
+        245
       ]
     ],
     "translation": "Failed to schedule message"
@@ -745,7 +745,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        220
+        229
       ]
     ],
     "translation": "Message scheduled successfully"
@@ -757,7 +757,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        225
+        234
       ]
     ],
     "translation": "You can view and manage it in the Scheduler tab"
@@ -768,7 +768,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        60
+        61
       ]
     ],
     "translation": "Send"
@@ -779,11 +779,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        481
+        521
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        598
+        611
       ]
     ],
     "translation": "Send Now"
@@ -794,11 +794,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        464
+        504
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        581
+        594
       ]
     ],
     "translation": "Send Mode"
@@ -809,15 +809,15 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        484
+        524
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        601
+        614
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        618
+        631
       ]
     ],
     "translation": "Schedule Send"
@@ -828,7 +828,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        491
+        531
       ]
     ],
     "translation": "Scheduled Send Time"
@@ -851,7 +851,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        562
+        650
       ]
     ],
     "translation": "Processing..."

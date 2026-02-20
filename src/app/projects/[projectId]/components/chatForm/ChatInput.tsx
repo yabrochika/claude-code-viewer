@@ -1,6 +1,7 @@
 import { Trans, useLingui } from "@lingui/react";
 import {
   AlertCircleIcon,
+  CalendarClockIcon,
   LoaderIcon,
   PaperclipIcon,
   SendIcon,
@@ -408,6 +409,51 @@ export const ChatInput: FC<ChatInputProps> = ({
         </div>
       )}
 
+      <input
+        ref={fileInputRef}
+        type="file"
+        multiple
+        onChange={handleFileSelect}
+        className="hidden"
+      />
+
+      <div className="mb-2 inline-flex items-center gap-1 rounded-xl border border-border/50 bg-muted/30 px-1.5 py-1 text-muted-foreground/80">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={isPending || disabled}
+          className="h-7 w-7 rounded-md hover:bg-background/80 hover:text-foreground"
+          aria-label="Attach file"
+        >
+          <PaperclipIcon className="w-3.5 h-3.5" />
+        </Button>
+        {enableCCOptions && (
+          <ClaudeCodeSettingsPopover
+            value={ccOptions}
+            onChange={setCCOptions}
+            disabled={isPending || disabled}
+            showForkOption={Boolean(baseSessionId)}
+            forkSession={forkSession}
+            onForkSessionChange={setForkSession}
+          />
+        )}
+        {enableScheduledSend && sendMode === "immediate" && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => setSendMode("scheduled")}
+            disabled={isPending || disabled}
+            className="h-7 w-7 rounded-md hover:bg-background/80 hover:text-foreground"
+            aria-label="Schedule send"
+          >
+            <CalendarClockIcon className="w-3.5 h-3.5" />
+          </Button>
+        )}
+      </div>
+
       {presets.length > 0 && (
         <div className="mb-2 space-y-1.5">
           <p className="text-[11px] font-medium text-muted-foreground">
@@ -544,26 +590,6 @@ export const ChatInput: FC<ChatInputProps> = ({
 
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-3 text-muted-foreground/70">
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  multiple
-                  onChange={handleFileSelect}
-                  className="hidden"
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isPending || disabled}
-                  className="gap-2 px-2 hover:bg-background/80 hover:text-foreground text-muted-foreground transition-all duration-200 h-8 rounded-lg"
-                >
-                  <PaperclipIcon className="w-4 h-4" />
-                  <span className="text-xs font-medium hidden sm:inline">
-                    <Trans id="chat.attach_file" />
-                  </span>
-                </Button>
                 {message.length > 0 && (
                   <span
                     className="text-[10px] font-medium bg-muted/50 px-2 py-0.5 rounded-full border border-border/30 transition-all duration-200"
@@ -571,16 +597,6 @@ export const ChatInput: FC<ChatInputProps> = ({
                   >
                     {message.length}
                   </span>
-                )}
-                {enableCCOptions && (
-                  <ClaudeCodeSettingsPopover
-                    value={ccOptions}
-                    onChange={setCCOptions}
-                    disabled={isPending || disabled}
-                    showForkOption={Boolean(baseSessionId)}
-                    forkSession={forkSession}
-                    onForkSessionChange={setForkSession}
-                  />
                 )}
               </div>
 

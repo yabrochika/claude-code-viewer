@@ -309,4 +309,70 @@ describe("ProjectRepository", () => {
       ).toBe(true);
     });
   });
+
+  describe("deleteProject", () => {
+    it("deletes existing project directory and invalidates metadata cache", async () => {
+      const projectPath = "/test/project-to-delete";
+      const projectId = Buffer.from(projectPath).toString("base64url");
+      let invalidatedProjectId: string | null = null;
+      let removedPath: string | null = null;
+
+      const program = Effect.gen(function* () {
+        const repo = yield* ProjectRepository;
+        yield* repo.deleteProject(projectId);
+      });
+
+      await Effect.runPromise(
+        program.pipe(
+          Effect.provide(ProjectRepository.Live),
+          Effect.provide(
+            testProjectMetaServiceLayer({
+              invalidateProject: () =>
+                Effect.sync(() => {
+                  invalidatedProjectId = projectId;
+                }),
+            }),
+          ),
+          Effect.provide(
+            testFileSystemLayer({
+              exists: (path: string) => Effect.succeed(path === projectPath),
+              remove: (path: string) =>
+                Effect.sync(() => {
+                  removedPath = path;
+                }),
+            }),
+          ),
+          Effect.provide(testPlatformLayer()),
+        ),
+      );
+
+      expect(removedPath).toBe(projectPath);
+      expect(invalidatedProjectId).toBe(projectId);
+    });
+
+    it("returns not found error when project does not exist", async () => {
+      const projectPath = "/test/missing-project";
+      const projectId = Buffer.from(projectPath).toString("base64url");
+
+      const program = Effect.gen(function* () {
+        const repo = yield* ProjectRepository;
+        return yield* repo.deleteProject(projectId);
+      });
+
+      await expect(
+        Effect.runPromise(
+          program.pipe(
+            Effect.provide(ProjectRepository.Live),
+            Effect.provide(testProjectMetaServiceLayer()),
+            Effect.provide(
+              testFileSystemLayer({
+                exists: () => Effect.succeed(false),
+              }),
+            ),
+            Effect.provide(testPlatformLayer()),
+          ),
+        ),
+      ).rejects.toThrow("Project not found");
+    });
+  });
 });

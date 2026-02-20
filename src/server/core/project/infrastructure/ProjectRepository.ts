@@ -104,9 +104,23 @@ const LayerImpl = Effect.gen(function* () {
       return { projects: sortedProjects };
     });
 
+  const deleteProject = (projectId: string) =>
+    Effect.gen(function* () {
+      const fullPath = decodeProjectId(projectId);
+
+      const exists = yield* fs.exists(fullPath);
+      if (!exists) {
+        return yield* Effect.fail(new Error("Project not found"));
+      }
+
+      yield* fs.remove(fullPath, { recursive: true });
+      yield* projectMetaService.invalidateProject(projectId);
+    });
+
   return {
     getProject,
     getProjects,
+    deleteProject,
   };
 });
 
