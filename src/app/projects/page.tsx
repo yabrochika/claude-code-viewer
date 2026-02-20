@@ -1,5 +1,7 @@
 import { Trans } from "@lingui/react";
 import { type FC, Suspense } from "react";
+import { GlobalSidebar } from "@/components/GlobalSidebar";
+import { Badge } from "@/components/ui/badge";
 import { AddWorktreeDialog } from "./components/AddWorktreeDialog";
 import { ProjectList } from "./components/ProjectList";
 import { SetupProjectDialog } from "./components/SetupProjectDialog";
@@ -7,9 +9,21 @@ import { SetupProjectDialog } from "./components/SetupProjectDialog";
 export const ProjectsPage: FC = () => {
   return (
     <div className="flex h-screen max-h-screen overflow-hidden">
+      <div className="h-full">
+        <GlobalSidebar isContentHidden />
+      </div>
       <div className="flex-1 overflow-auto">
         <div className="container mx-auto px-4 py-8">
           <header className="mb-8">
+            <h1 className="text-3xl font-bold flex items-center gap-2">
+              Claude Code Viewer
+              <Badge
+                variant="secondary"
+                className="text-[10px] px-2 py-0.5 leading-none"
+              >
+                jtcc
+              </Badge>
+            </h1>
             <p className="text-muted-foreground">
               <Trans id="projects.page.description" />
             </p>
