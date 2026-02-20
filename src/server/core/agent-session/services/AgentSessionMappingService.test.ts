@@ -1,11 +1,13 @@
 import { resolve } from "node:path";
-import { NodeFileSystem } from "@effect/platform-node";
+import { NodeFileSystem, NodePath } from "@effect/platform-node";
 import { Effect, Layer } from "effect";
+import { testFileSystemLayer } from "../../../../testing/layers/testFileSystemLayer";
 import { testPlatformLayer } from "../../../../testing/layers/testPlatformLayer";
 import { encodeProjectId } from "../../project/functions/id";
 import { AgentSessionMappingService } from "./AgentSessionMappingService";
 
 const testLayer = Layer.mergeAll(testPlatformLayer(), NodeFileSystem.layer);
+const normalizePath = (value: string) => value.replace(/\\/g, "/");
 
 describe("AgentSessionMappingService", () => {
   const sampleProjectPath = resolve(
@@ -16,6 +18,45 @@ describe("AgentSessionMappingService", () => {
   const sampleSessionId = "5c0375b4-57a5-4f26-b12d-d022ee4e51b7";
 
   describe("getAgentFilePath", () => {
+    it("uses native filesystem path for project directory scan", async () => {
+      const projectPath = "C:/test/project";
+      const projectId = encodeProjectId(projectPath);
+      const observedPaths: Array<string> = [];
+
+      const program = Effect.gen(function* () {
+        const service = yield* AgentSessionMappingService;
+        return yield* service.getAgentFilePath(
+          projectId,
+          "session-id",
+          "prompt",
+        );
+      });
+
+      const result = await Effect.runPromise(
+        program.pipe(
+          Effect.provide(AgentSessionMappingService.Live),
+          Effect.provide(
+            testFileSystemLayer({
+              readDirectory: (targetPath) => {
+                observedPaths.push(targetPath);
+                return Effect.succeed([]);
+              },
+            }),
+          ),
+          Effect.provide(NodePath.layer),
+        ),
+      );
+
+      expect(result).toBeNull();
+      expect(observedPaths.length).toBe(1);
+      expect(
+        observedPaths.every(
+          (targetPath) =>
+            !(targetPath.includes("\\") && targetPath.includes("/")),
+        ),
+      ).toBe(true);
+    });
+
     it("should return agent file path for matching sessionId and prompt", async () => {
       const program = Effect.gen(function* () {
         const service = yield* AgentSessionMappingService;
@@ -33,8 +74,9 @@ describe("AgentSessionMappingService", () => {
         ),
       );
 
-      expect(result).toBe(
-        resolve(sampleProjectPath, "agent-test-hash-123.jsonl"),
+      expect(result).not.toBeNull();
+      expect(normalizePath(result ?? "")).toBe(
+        normalizePath(resolve(sampleProjectPath, "agent-test-hash-123.jsonl")),
       );
     });
 
@@ -97,8 +139,9 @@ describe("AgentSessionMappingService", () => {
         ),
       );
 
-      expect(result).toBe(
-        resolve(sampleProjectPath, "agent-test-hash-123.jsonl"),
+      expect(result).not.toBeNull();
+      expect(normalizePath(result ?? "")).toBe(
+        normalizePath(resolve(sampleProjectPath, "agent-test-hash-123.jsonl")),
       );
     });
 
@@ -138,8 +181,8 @@ describe("AgentSessionMappingService", () => {
         sampleProjectPath,
         "agent-test-hash-456.jsonl",
       );
-      expect(result1).toBe(expectedPath);
-      expect(result2).toBe(expectedPath);
+      expect(normalizePath(result1 ?? "")).toBe(normalizePath(expectedPath));
+      expect(normalizePath(result2 ?? "")).toBe(normalizePath(expectedPath));
       expect(callCount).toBe(2);
     });
 
@@ -166,11 +209,11 @@ describe("AgentSessionMappingService", () => {
         ),
       );
 
-      expect(result1).toBe(
-        resolve(sampleProjectPath, "agent-test-hash-123.jsonl"),
+      expect(normalizePath(result1 ?? "")).toBe(
+        normalizePath(resolve(sampleProjectPath, "agent-test-hash-123.jsonl")),
       );
-      expect(result2).toBe(
-        resolve(sampleProjectPath, "agent-test-hash-456.jsonl"),
+      expect(normalizePath(result2 ?? "")).toBe(
+        normalizePath(resolve(sampleProjectPath, "agent-test-hash-456.jsonl")),
       );
     });
   });
@@ -211,8 +254,8 @@ describe("AgentSessionMappingService", () => {
         sampleProjectPath,
         "agent-test-hash-123.jsonl",
       );
-      expect(result1).toBe(expectedPath);
-      expect(result2).toBe(expectedPath);
+      expect(normalizePath(result1 ?? "")).toBe(normalizePath(expectedPath));
+      expect(normalizePath(result2 ?? "")).toBe(normalizePath(expectedPath));
     });
   });
 
@@ -252,8 +295,8 @@ describe("AgentSessionMappingService", () => {
         sampleProjectPath,
         "agent-test-hash-123.jsonl",
       );
-      expect(result1).toBe(expectedPath);
-      expect(result2).toBe(expectedPath);
+      expect(normalizePath(result1 ?? "")).toBe(normalizePath(expectedPath));
+      expect(normalizePath(result2 ?? "")).toBe(normalizePath(expectedPath));
     });
   });
 });

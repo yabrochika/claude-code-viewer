@@ -21,6 +21,8 @@ const normalizeJoinedPathForBase = (joinedPath: string, basePath: string) =>
 const LayerImpl = Effect.gen(function* () {
   const fs = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
+  const toFsPath = (value: string) =>
+    path.sep === "\\" ? value.replace(/\//g, "\\") : value.replace(/\\/g, "/");
   const cacheRef = yield* Ref.make<AgentSessionMappingCache>(new Map());
 
   /**
@@ -32,14 +34,15 @@ const LayerImpl = Effect.gen(function* () {
   ): Effect.Effect<void, Error> =>
     Effect.gen(function* () {
       const projectPath = decodeProjectId(projectId);
-      const dirents = yield* fs.readDirectory(projectPath);
+      const projectPathForFs = toFsPath(projectPath);
+      const dirents = yield* fs.readDirectory(projectPathForFs);
 
       const agentFiles = dirents.filter((entry) => entry.startsWith("agent-"));
 
       for (const agentFile of agentFiles) {
         const agentFilePath = normalizeJoinedPathForBase(
-          path.join(projectPath, agentFile),
-          projectPath,
+          path.join(projectPathForFs, agentFile),
+          projectPathForFs,
         );
         const content = yield* fs.readFileString(agentFilePath);
         const firstLine = content.split("\n")[0];
