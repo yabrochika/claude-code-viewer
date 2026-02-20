@@ -1,9 +1,7 @@
 export const sessionPresetIds = [
-  "new-bug-collection",
   "latest-sync",
   "server-start",
   "test-case-creation",
-  "test-case-review",
 ] as const;
 
 export type SessionPresetId = (typeof sessionPresetIds)[number];
@@ -37,14 +35,6 @@ Test Case Name	Module/Feature	Priority	Prerequisites	Test Steps	Test Data	Expect
 - Medium
 - Low`;
 
-const TEST_CASE_REVIEW_PROMPT = `As a QA engineer agent, review test cases based on the attached materials and present the results.
-
-@ref-check-prompt.md
-@content-check-plan.md
-@content-check-prompt.md
-@README.md
-@ref-check-plan.md`;
-
 const LATEST_SYNC_PROMPT =
   "Run git pull origin staging to sync the latest changes.";
 const SERVER_START_PROMPT =
@@ -56,12 +46,6 @@ export const sessionPresets: Array<{
   initialMessage: string;
   colorHex: string;
 }> = [
-  {
-    id: "new-bug-collection",
-    label: "🐞 New Bug Collection",
-    initialMessage: "Collect new bugs",
-    colorHex: "#E53935",
-  },
   {
     id: "latest-sync",
     label: "Latest Sync",
@@ -79,12 +63,6 @@ export const sessionPresets: Array<{
     label: "📝 Create Test Cases",
     initialMessage: TEST_CASE_CREATION_PROMPT,
     colorHex: "#1E88E5",
-  },
-  {
-    id: "test-case-review",
-    label: "🔍 Review Test Cases",
-    initialMessage: TEST_CASE_REVIEW_PROMPT,
-    colorHex: "#43A047",
   },
 ];
 

@@ -8,9 +8,11 @@ export const computeClaudeProjectFilePath = (options: {
   Effect.gen(function* () {
     const path = yield* Path.Path;
     const { projectPath, claudeProjectsDirPath } = options;
+    const normalizedProjectPath = projectPath.replace(/\\/g, "/");
+    const trimmedProjectPath = normalizedProjectPath.replace(/\/$/, "");
 
     return path.join(
       claudeProjectsDirPath,
-      projectPath.replace(/\/$/, "").replace(/\//g, "-"),
+      trimmedProjectPath.replace(/\//g, "-"),
     );
   });

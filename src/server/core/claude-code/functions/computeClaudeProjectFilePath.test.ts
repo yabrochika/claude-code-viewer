@@ -35,4 +35,18 @@ describe("computeClaudeProjectFilePath", () => {
 
     expect(result).toBe(expected);
   });
+
+  it("handles Windows-style paths with backslashes", async () => {
+    const projectPath = "C:\\Users\\me\\dev\\example";
+    const expected = `${TEST_PROJECTS_DIR}/C:-Users-me-dev-example`;
+
+    const result = await Effect.runPromise(
+      computeClaudeProjectFilePath({
+        projectPath,
+        claudeProjectsDirPath: TEST_PROJECTS_DIR,
+      }).pipe(Effect.provide(Path.layer)),
+    );
+
+    expect(result).toBe(expected);
+  });
 });
