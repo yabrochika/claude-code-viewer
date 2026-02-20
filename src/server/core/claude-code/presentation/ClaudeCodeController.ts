@@ -101,7 +101,7 @@ const LayerImpl = Effect.gen(function* () {
       const { projectId } = options;
       const servers = yield* claudeCodeService.getMcpList(projectId).pipe(
         // Keep MCP tab usable even when local Claude CLI is unavailable.
-        Effect.catchAll(() => Effect.succeed([])),
+        Effect.catchAllCause(() => Effect.succeed([])),
       );
       return {
         response: { servers },
@@ -111,7 +111,15 @@ const LayerImpl = Effect.gen(function* () {
 
   const getClaudeCodeMeta = () =>
     Effect.gen(function* () {
-      const config = yield* claudeCodeService.getClaudeCodeMeta();
+      const config = yield* claudeCodeService.getClaudeCodeMeta().pipe(
+        // Keep settings/system-info usable even when Claude CLI detection fails.
+        Effect.catchAllCause(() =>
+          Effect.succeed({
+            claudeCodeExecutablePath: null,
+            claudeCodeVersion: null,
+          }),
+        ),
+      );
       return {
         response: {
           executablePath: config.claudeCodeExecutablePath,
@@ -125,7 +133,18 @@ const LayerImpl = Effect.gen(function* () {
 
   const getAvailableFeatures = () =>
     Effect.gen(function* () {
-      const features = yield* claudeCodeService.getAvailableFeatures();
+      const features = yield* claudeCodeService.getAvailableFeatures().pipe(
+        // Fallback to disabled features when CLI metadata is unavailable.
+        Effect.catchAllCause(() =>
+          Effect.succeed({
+            canUseTool: false,
+            uuidOnSDKMessage: false,
+            agentSdk: false,
+            sidechainSeparation: false,
+            runSkillsDirectly: false,
+          }),
+        ),
+      );
       const featuresList = Object.entries(features).flatMap(([key, value]) => {
         return [
           {
