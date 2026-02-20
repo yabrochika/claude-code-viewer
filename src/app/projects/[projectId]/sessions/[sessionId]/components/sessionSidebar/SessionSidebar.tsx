@@ -52,7 +52,7 @@ export const SessionSidebar: FC<{
       {
         id: "sessions",
         icon: MessageSquareIcon,
-        title: <Trans id="sidebar.show.session.list" />,
+        title: "ワークスペース",
         content: (
           <Suspense fallback={<Loading />}>
             <SessionsTab />

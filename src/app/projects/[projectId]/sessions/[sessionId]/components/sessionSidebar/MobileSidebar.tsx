@@ -190,9 +190,7 @@ export const MobileSidebar: FC<MobileSidebarProps> = ({
                   </button>
                 </TooltipTrigger>
                 <TooltipContent side="right">
-                  <p>
-                    <Trans id="sidebar.show.session.list" />
-                  </p>
+                  <p>ワークスペース</p>
                 </TooltipContent>
               </Tooltip>
 
