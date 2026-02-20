@@ -19,9 +19,9 @@ export const ProjectsPage: FC = () => {
               Claude Code Viewer
               <Badge
                 variant="secondary"
-                className="text-[10px] px-2 py-0.5 leading-none"
+                className="text-[15px] px-2 py-0.5 leading-none bg-[#2aa23a] text-white"
               >
-                jtcc
+                JTCC
               </Badge>
             </h1>
             <p className="text-muted-foreground">

@@ -33,8 +33,6 @@ export const SessionsTab: FC<{
   // Preserve current tab state or default to "sessions"
   const currentTab = search.tab ?? "sessions";
 
-  const isNewChatActive = currentSessionId === "";
-
   // Sort sessions: Running > Paused > Others, then by lastModifiedAt (newest first)
   const sortedSessions = [...sessions].sort((a, b) => {
     const aProcess = sessionProcesses.find(
@@ -75,15 +73,7 @@ export const SessionsTab: FC<{
           <h2 className="font-semibold text-sm text-sidebar-foreground">
             ワークスペース
           </h2>
-          <Link
-            to="/projects/$projectId/session"
-            params={{ projectId }}
-            search={(prev) => ({
-              ...prev,
-              tab: currentTab,
-              sessionId: undefined,
-            })}
-          >
+          <Link to="/projects">
             <Button
               variant="secondary"
               size="sm"
@@ -101,16 +91,9 @@ export const SessionsTab: FC<{
 
       <div className="flex-1 overflow-y-auto p-2 space-y-2 bg-[#070f24]">
         <Link
-          to="/projects/$projectId/session"
-          params={{ projectId }}
-          search={(prev) => ({
-            ...prev,
-            tab: currentTab,
-            sessionId: undefined,
-          })}
+          to="/projects"
           className={cn(
             "block rounded-xl p-2.5 transition-all duration-200 border border-blue-800/60 hover:border-blue-500/80 bg-[#0b1a3d] hover:bg-[#0f2456]",
-            isNewChatActive && "border-blue-400 shadow-sm",
           )}
         >
           <div className="flex items-center gap-3">

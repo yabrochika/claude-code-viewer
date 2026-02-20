@@ -612,10 +612,6 @@
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
         572
-      ],
-      [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        105
       ]
     ],
     "translation": "新しいチャットを開始"
@@ -945,7 +941,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        193
+        207
       ]
     ],
     "translation": "読み込み中..."
@@ -2756,7 +2752,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        156
+        170
       ]
     ],
     "translation": "一時停止"
@@ -2775,7 +2771,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        154
+        168
       ]
     ],
     "translation": "実行中"
@@ -2790,21 +2786,10 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        195
+        209
       ]
     ],
     "translation": "さらに読み込む"
-  },
-  "sessions.title": {
-    "placeholders": {},
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        76
-      ]
-    ],
-    "translation": "セッション"
   },
   "sessions.total": {
     "placeholders": {},
@@ -2813,10 +2798,6 @@
       [
         "src/app/components/SessionHistoryPopover.tsx",
         137
-      ],
-      [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        80
       ]
     ],
     "translation": "合計"
