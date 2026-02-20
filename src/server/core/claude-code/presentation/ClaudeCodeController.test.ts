@@ -688,4 +688,67 @@ describe("ClaudeCodeController.getClaudeCommands", () => {
     expect(result.response.globalCommandsLegacy).toEqual([]);
     expect(result.response.projectCommandsLegacy).toEqual([]);
   });
+
+  it("should return empty mcp server list when mcp loading fails", async () => {
+    const projectLayer = testProjectRepositoryLayer({
+      projects: [],
+    });
+
+    const appContextLayer = Layer.succeed(
+      ApplicationContext,
+      ApplicationContext.of({
+        claudeCodePaths: Effect.succeed({
+          globalClaudeDirectoryPath: testDir,
+          claudeCommandsDirPath: globalCommandsDir,
+          claudeSkillsDirPath: `${testDir}/skills`,
+          claudeProjectsDirPath: `${testDir}/projects`,
+        }),
+      }),
+    );
+
+    const testClaudeCodeServiceWithFailingMcpLayer = Layer.succeed(
+      ClaudeCodeService,
+      ClaudeCodeService.of({
+        getClaudeCodeMeta: () =>
+          Effect.succeed({
+            claudeCodeExecutablePath: "/mock/claude",
+            claudeCodeVersion: null,
+          }),
+        getAvailableFeatures: () =>
+          Effect.succeed({
+            canUseTool: false,
+            uuidOnSDKMessage: false,
+            agentSdk: false,
+            sidechainSeparation: false,
+            runSkillsDirectly: false,
+          }),
+        getMcpList: () => Effect.fail(new Error("mcp list failed")),
+      }),
+    );
+
+    const testLayer = ClaudeCodeController.Live.pipe(
+      Layer.provide(testClaudeCodeServiceWithFailingMcpLayer),
+      Layer.provide(projectLayer),
+      Layer.provide(appContextLayer),
+      Layer.provide(NodeContext.layer),
+      Layer.provide(testPlatformLayer()),
+    );
+
+    const result = await Effect.runPromise(
+      Effect.gen(function* () {
+        const controller = yield* ClaudeCodeController;
+        return yield* controller
+          .getMcpListRoute({
+            projectId: "test-project",
+          })
+          .pipe(
+            Effect.provide(NodeContext.layer),
+            Effect.provide(testPlatformLayer()),
+          );
+      }).pipe(Effect.provide(testLayer)),
+    );
+
+    expect(result.status).toBe(200);
+    expect(result.response.servers).toEqual([]);
+  });
 });

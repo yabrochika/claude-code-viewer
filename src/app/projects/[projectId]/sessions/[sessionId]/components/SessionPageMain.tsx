@@ -3,6 +3,8 @@ import { useMutation } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
   CopyIcon,
   DownloadIcon,
   EllipsisVertical as EllipsisVerticalIcon,
@@ -10,6 +12,7 @@ import {
   LoaderIcon,
   MessageSquareIcon,
   PauseIcon,
+  PlusIcon,
   TrashIcon,
 } from "lucide-react";
 import {
@@ -21,7 +24,6 @@ import {
   useState,
 } from "react";
 import { toast } from "sonner";
-import { useConfig } from "@/app/hooks/useConfig";
 import { PermissionDialog } from "@/components/PermissionDialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -34,7 +36,6 @@ import { usePermissionRequests } from "@/hooks/usePermissionRequests";
 import { useSchedulerJobs } from "@/hooks/useScheduler";
 import { useTaskNotifications } from "@/hooks/useTaskNotifications";
 import { honoClient } from "@/lib/api/client";
-import { formatLocaleDate } from "@/lib/date/formatLocaleDate";
 import { cn } from "@/lib/utils";
 import { parseUserMessage } from "@/server/core/claude-code/functions/parseUserMessage";
 import { useProject } from "../../../hooks/useProject";
@@ -104,7 +105,6 @@ const SessionPageMainContent: FC<
   const { data: allSchedulerJobs } = useSchedulerJobs();
   const { data: projectData } = useProject(projectId);
   const sessionProcesses = useAtomValue(sessionProcessesAtom);
-  const { config } = useConfig();
   const sessions = projectData.pages.flatMap((page) => page.sessions);
 
   const hasLocalCommandOutput = useMemo(
@@ -193,6 +193,7 @@ const SessionPageMainContent: FC<
     useState(0);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  const sessionListRef = useRef<HTMLDivElement | null>(null);
 
   const abortTask = useMutation({
     mutationFn: async (sessionProcessId: string) => {
@@ -251,6 +252,15 @@ const SessionPageMainContent: FC<
         behavior: "smooth",
       });
     }
+  };
+
+  const scrollSessionList = (direction: "left" | "right") => {
+    const list = sessionListRef.current;
+    if (!list) return;
+    list.scrollBy({
+      left: direction === "left" ? -240 : 240,
+      behavior: "smooth",
+    });
   };
 
   const sessionTitle =
@@ -548,6 +558,83 @@ const SessionPageMainContent: FC<
           </div>
         </header>
 
+        <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 pt-2 pb-1 border-b border-border/40">
+          <div className="flex items-center justify-between gap-2 mb-2">
+            <h3 className="text-xs font-semibold text-muted-foreground">
+              セッション履歴
+            </h3>
+            <div className="flex items-center gap-1.5">
+              <Link
+                to="/projects/$projectId/session"
+                params={{ projectId }}
+                search={(prev) => ({
+                  ...prev,
+                  sessionId: undefined,
+                })}
+              >
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="h-7 px-2 text-xs gap-1.5"
+                >
+                  <PlusIcon className="w-3.5 h-3.5" />
+                  新規
+                </Button>
+              </Link>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                onClick={() => scrollSessionList("left")}
+              >
+                <ChevronLeftIcon className="w-4 h-4" />
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                onClick={() => scrollSessionList("right")}
+              >
+                <ChevronRightIcon className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+
+          <div
+            ref={sessionListRef}
+            className="flex items-center gap-2 overflow-x-auto pb-1"
+          >
+            {sortedSessions.map((session) => {
+              const title =
+                session.meta.firstUserMessage !== null
+                  ? firstUserMessageToTitle(session.meta.firstUserMessage)
+                  : session.id;
+              const isActive = session.id === sessionId;
+              return (
+                <Link
+                  key={session.id}
+                  to="/projects/$projectId/session"
+                  params={{ projectId }}
+                  search={(prev) => ({
+                    ...prev,
+                    sessionId: session.id,
+                  })}
+                  className={cn(
+                    "inline-flex shrink-0 items-center rounded-full border px-3 py-1 text-xs transition-colors",
+                    isActive
+                      ? "border-primary/60 bg-primary/15 text-foreground"
+                      : "border-border/60 bg-muted/30 text-muted-foreground hover:text-foreground hover:bg-muted/50",
+                  )}
+                >
+                  <span className="max-w-[260px] truncate">{title}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+
         <div
           ref={scrollContainerRef}
           className="flex-1 overflow-y-auto min-h-0 min-w-0"
@@ -576,85 +663,6 @@ const SessionPageMainContent: FC<
                     </p>
                   </div>
                 </div>
-
-                {/* Recent Sessions List */}
-                {sortedSessions.length > 0 && (
-                  <div className="space-y-3">
-                    <h3 className="text-sm font-semibold text-muted-foreground">
-                      <Trans id="chat.history.title" />
-                    </h3>
-                    <div className="grid gap-2">
-                      {sortedSessions.slice(0, 3).map((session) => {
-                        const title =
-                          session.meta.firstUserMessage !== null
-                            ? firstUserMessageToTitle(
-                                session.meta.firstUserMessage,
-                              )
-                            : session.id;
-
-                        const sessionProcess = sessionProcesses.find(
-                          (task) => task.sessionId === session.id,
-                        );
-                        const isRunning = sessionProcess?.status === "running";
-                        const isPaused = sessionProcess?.status === "paused";
-
-                        return (
-                          <Link
-                            key={session.id}
-                            to="/projects/$projectId/session"
-                            params={{ projectId }}
-                            search={(prev) => ({
-                              ...prev,
-                              sessionId: session.id,
-                            })}
-                            className={cn(
-                              "block p-3 rounded-lg transition-colors border",
-                              "border-border/40 hover:bg-muted/50 hover:border-primary/30",
-                            )}
-                          >
-                            <div className="flex items-start justify-between gap-2 mb-1">
-                              <h4 className="text-sm font-medium line-clamp-1 flex-1">
-                                {title}
-                              </h4>
-                              {(isRunning || isPaused) && (
-                                <Badge
-                                  variant="secondary"
-                                  className={cn(
-                                    "text-[10px] px-1.5 h-4 shrink-0",
-                                    isRunning &&
-                                      "bg-green-500/10 text-green-600 dark:text-green-400",
-                                    isPaused &&
-                                      "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400",
-                                  )}
-                                >
-                                  {isRunning ? (
-                                    <Trans id="session.status.running" />
-                                  ) : (
-                                    <Trans id="session.status.paused" />
-                                  )}
-                                </Badge>
-                              )}
-                            </div>
-                            <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
-                              <div className="flex items-center gap-1">
-                                <MessageSquareIcon className="w-2.5 h-2.5" />
-                                <span>{session.meta.messageCount}</span>
-                              </div>
-                              {session.lastModifiedAt && (
-                                <span>
-                                  {formatLocaleDate(session.lastModifiedAt, {
-                                    locale: config.locale,
-                                    target: "time",
-                                  })}
-                                </span>
-                              )}
-                            </div>
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
               </div>
             )}
             {isExistingSession && effectiveSessionStatus === "running" && (

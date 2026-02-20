@@ -25,14 +25,12 @@ import { McpTab } from "./McpTab";
 import { SessionsTab } from "./SessionsTab";
 
 interface MobileSidebarProps {
-  currentSessionId: string;
   projectId: string;
   isOpen: boolean;
   onClose: () => void;
 }
 
 export const MobileSidebar: FC<MobileSidebarProps> = ({
-  currentSessionId,
   projectId,
   isOpen,
   onClose,
@@ -83,13 +81,7 @@ export const MobileSidebar: FC<MobileSidebarProps> = ({
   const renderContent = () => {
     switch (activeTab) {
       case "sessions":
-        return (
-          <SessionsTab
-            currentSessionId={currentSessionId}
-            projectId={projectId}
-            isMobile={true}
-          />
-        );
+        return <SessionsTab />;
       case "mcp":
         return <McpTab projectId={projectId} />;
       case "settings":

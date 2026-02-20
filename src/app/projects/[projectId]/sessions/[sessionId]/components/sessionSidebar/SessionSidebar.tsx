@@ -55,10 +55,7 @@ export const SessionSidebar: FC<{
         title: <Trans id="sidebar.show.session.list" />,
         content: (
           <Suspense fallback={<Loading />}>
-            <SessionsTab
-              currentSessionId={activeSessionId}
-              projectId={projectId}
-            />
+            <SessionsTab />
           </Suspense>
         ),
       },
@@ -121,7 +118,6 @@ export const SessionSidebar: FC<{
 
       {/* Mobile sidebar */}
       <MobileSidebar
-        currentSessionId={activeSessionId}
         projectId={projectId}
         isOpen={isMobileOpen}
         onClose={() => onMobileOpenChange?.(false)}

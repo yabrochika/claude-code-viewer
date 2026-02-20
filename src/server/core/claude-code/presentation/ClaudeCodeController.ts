@@ -99,7 +99,10 @@ const LayerImpl = Effect.gen(function* () {
   const getMcpListRoute = (options: { projectId: string }) =>
     Effect.gen(function* () {
       const { projectId } = options;
-      const servers = yield* claudeCodeService.getMcpList(projectId);
+      const servers = yield* claudeCodeService.getMcpList(projectId).pipe(
+        // Keep MCP tab usable even when local Claude CLI is unavailable.
+        Effect.catchAll(() => Effect.succeed([])),
+      );
       return {
         response: { servers },
         status: 200,
