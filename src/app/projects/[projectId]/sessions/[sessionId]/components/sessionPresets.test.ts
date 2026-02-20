@@ -3,10 +3,11 @@ import { getSessionPresetById, sessionPresets } from "./sessionPresets";
 
 describe("sessionPresets", () => {
   it("provides fixed presets", () => {
-    expect(sessionPresets).toHaveLength(5);
+    expect(sessionPresets).toHaveLength(6);
     expect(sessionPresets.map((preset) => preset.label)).toEqual([
       "Latest Sync",
       "🚀 Server Launch",
+      "🗂️ Bug収集",
       "📝 テストケース作成",
       "🐞 DefectをStory化",
       "🔍 テストケースレビュー",

@@ -1,6 +1,7 @@
 export const sessionPresetIds = [
   "latest-sync",
   "server-start",
+  "bug-collection",
   "test-case-creation",
   "defect-to-story",
   "test-case-review",
@@ -125,6 +126,16 @@ make run
 
 ### 7. 動作確認
 curl http://localhost:$APP_PORT/healthz`;
+const BUG_COLLECTION_PROMPT = `プロジェクト内の不具合情報を収集して、以下の形式で整理してください。
+
+- 不具合タイトル
+- 影響範囲
+- 再現手順
+- 期待結果と実際の結果
+- 優先度（High / Middium / Low）
+- 備考
+
+情報が不足している場合は、不足項目を明確に列挙してください。`;
 const DEFECT_TO_STORY_PROMPT = `指定した Epic 配下に、EZ Test の Defect を基にしたバグ Story を作成してください。
 
 - EZ Test Defect URL: <PASTE_DEFECT_URL_HERE>
@@ -159,6 +170,12 @@ export const sessionPresets: Array<{
     label: "🚀 Server Launch",
     initialMessage: SERVER_START_PROMPT,
     colorHex: "#FB8C00",
+  },
+  {
+    id: "bug-collection",
+    label: "🗂️ Bug収集",
+    initialMessage: BUG_COLLECTION_PROMPT,
+    colorHex: "#7E57C2",
   },
   {
     id: "test-case-creation",

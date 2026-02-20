@@ -3369,7 +3369,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        241
+        239
       ],
       [
         "src/components/GlobalSidebar.tsx",
@@ -3537,7 +3537,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        218
+        216
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionSidebar.tsx",
@@ -3557,21 +3557,6 @@
     ],
     "translation": "スケジューラジョブを表示"
   },
-  "sidebar.show.session.list": {
-    "placeholders": {},
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        194
-      ],
-      [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionSidebar.tsx",
-        55
-      ]
-    ],
-    "translation": "セッション一覧を表示"
-  },
   "sidebar.show.task.list": {
     "placeholders": {},
     "comments": [],
@@ -3589,7 +3574,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        263
+        261
       ]
     ],
     "translation": "システム情報を表示"
