@@ -8,33 +8,38 @@ export const sessionPresetIds = [
 
 export type SessionPresetId = (typeof sessionPresetIds)[number];
 
-const TEST_CASE_CREATION_PROMPT = `As a QA engineer agent, create test cases according to the specification below.
+const TEST_CASE_CREATION_PROMPT = `QAエンジニアとして、以下の仕様でテストケースを作成してください。
 
-[Output format]
-- Output in TSV format (inside a code block)
-- Use the following header exactly as-is for the first row
-- Empty values are not allowed. If unknown, write "Unknown" or "Cannot be confirmed"
+[出力形式]
+- コードブロック内でTSV形式で出力すること
+- 1行目のヘッダーは以下を厳密に使用すること
+- 空欄は禁止。情報が不足している場合も必ず記載すること
+- 「状態」は必ず ACTIVE を入れること
 
-Test Case Name	Module/Feature	Priority	Prerequisites	Test Steps	Test Data	Expected Result	Status	Bug ID	Description	Estimated Time (min)	Postconditions	Test Suite	RTC-ID	Flow-ID	Layer	Test Type	Code Reference	Notes	Platform	Device	Domain	Function	Execution Method	Automation Status
+テストケース名	モジュール・機能	優先度	前提条件	テスト手順	テストデータ	期待結果	状態	不具合ID	説明	想定時間（分）	事後条件	テストスイート	RTC-ID	Flow-ID	Layer	テスト種別	根拠コード	備考	プラットフォーム	端末	ドメイン	機能	実行方式	自動化状況
 
-[Allowed values for Test Type (choose exactly one)]
-- Normal
-- Abnormal
-- Non-functional
-- Initial check
-- Data consistency check
-- State transition check
-- Operational check
-- Failure scenario check
-- Regression
+[テスト種別]
+以下から適切なものを1つ選択すること:
+- 正常系
+- 異常系
+- 非機能
+- 初期確認
+- データ整合性確認
+- 状態遷移確認
+- 運用確認
+- 障害時確認
+- 回帰
 
-[Allowed values for Layer]
+[Layer]
+以下のいずれかを指定すること:
+- Smoke
 - Core
 - Extended
 
-[Allowed values for Priority]
+[優先度]
+以下のいずれかを指定すること:
 - High
-- Medium
+- Middium
 - Low`;
 
 const LATEST_SYNC_PROMPT =
@@ -78,7 +83,7 @@ export const sessionPresets: Array<{
   },
   {
     id: "test-case-creation",
-    label: "📝 Create Test Cases",
+    label: "📝 テストケース作成",
     initialMessage: TEST_CASE_CREATION_PROMPT,
     colorHex: "#1E88E5",
   },

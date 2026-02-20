@@ -7,7 +7,7 @@ describe("sessionPresets", () => {
     expect(sessionPresets.map((preset) => preset.label)).toEqual([
       "Latest Sync",
       "🚀 Start Server",
-      "📝 Create Test Cases",
+      "📝 テストケース作成",
       "🐞 DefectをStory化",
       "🔍 テストケースレビュー",
     ]);
