@@ -189,7 +189,7 @@ export const ChatInput: FC<ChatInputProps> = ({
   }, [handleResizeMouseMove]);
 
   const handleResizeMouseDown = useCallback(
-    (event: React.MouseEvent<HTMLDivElement>) => {
+    (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
       setIsManualResized(true);
       resizeStartRef.current = { y: event.clientY, height: inputHeight };
