@@ -25,7 +25,7 @@ describe("sessionPresets", () => {
       "name: server-launch",
     );
     expect(getSessionPresetById("server-start")?.initialMessage).toContain(
-      "## 🚀 クイックスタート",
+      "Step 0: 環境確認",
     );
     expect(getSessionPresetById("test-case-review")?.initialMessage).toContain(
       "name: qa-review",
