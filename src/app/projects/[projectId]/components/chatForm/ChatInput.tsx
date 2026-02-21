@@ -133,12 +133,15 @@ export const ChatInput: FC<ChatInputProps> = ({
     getDefaultCCOptions,
   );
   const [forkSession, setForkSession] = useState(true);
+  const [inputHeight, setInputHeight] = useState(minHeightValue);
+  const [isManualResized, setIsManualResized] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const commandCompletionRef = useRef<CommandCompletionRef>(null);
   const fileCompletionRef = useRef<FileCompletionRef>(null);
+  const resizeStartRef = useRef<{ y: number; height: number } | null>(null);
   const helpId = useId();
   const { config } = useConfig();
   const createSchedulerJob = useCreateSchedulerJob();
@@ -146,6 +149,7 @@ export const ChatInput: FC<ChatInputProps> = ({
   // Auto-resize textarea based on content
   // biome-ignore lint/correctness/useExhaustiveDependencies: message is intentionally included to trigger resize
   useEffect(() => {
+    if (isManualResized) return;
     const textarea = textareaRef.current;
     if (!textarea) return;
 
@@ -154,16 +158,53 @@ export const ChatInput: FC<ChatInputProps> = ({
     // Set height to scrollHeight, but respect min/max constraints
     const scrollHeight = textarea.scrollHeight;
     const maxHeight = 200; // Maximum height in pixels (approx 5 lines)
-    textarea.style.height = `${Math.max(minHeightValue, Math.min(scrollHeight, maxHeight))}px`;
-  }, [message, minHeightValue]);
+    setInputHeight(Math.max(minHeightValue, Math.min(scrollHeight, maxHeight)));
+  }, [message, minHeightValue, isManualResized]);
 
-  // Set initial height to 1 line on mount
+  // Keep manual resize minimum in sync when props change.
   useEffect(() => {
-    const textarea = textareaRef.current;
-    if (!textarea) return;
-    // Set initial height to minHeight value
-    textarea.style.height = `${minHeightValue}px`;
+    setInputHeight((prev) => Math.max(prev, minHeightValue));
   }, [minHeightValue]);
+
+  const handleResizeMouseMove = useCallback(
+    (event: MouseEvent) => {
+      const start = resizeStartRef.current;
+      if (start === null) return;
+
+      const deltaY = event.clientY - start.y;
+      const maxHeight = 520;
+      const nextHeight = Math.max(
+        minHeightValue,
+        Math.min(start.height - deltaY, maxHeight),
+      );
+      setInputHeight(nextHeight);
+    },
+    [minHeightValue],
+  );
+
+  const handleResizeMouseUp = useCallback(() => {
+    resizeStartRef.current = null;
+    window.removeEventListener("mousemove", handleResizeMouseMove);
+    window.removeEventListener("mouseup", handleResizeMouseUp);
+  }, [handleResizeMouseMove]);
+
+  const handleResizeMouseDown = useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      event.preventDefault();
+      setIsManualResized(true);
+      resizeStartRef.current = { y: event.clientY, height: inputHeight };
+      window.addEventListener("mousemove", handleResizeMouseMove);
+      window.addEventListener("mouseup", handleResizeMouseUp);
+    },
+    [inputHeight, handleResizeMouseMove, handleResizeMouseUp],
+  );
+
+  useEffect(() => {
+    return () => {
+      window.removeEventListener("mousemove", handleResizeMouseMove);
+      window.removeEventListener("mouseup", handleResizeMouseUp);
+    };
+  }, [handleResizeMouseMove, handleResizeMouseUp]);
 
   const handleSubmit = async () => {
     if (!message.trim() && attachedFiles.length === 0) return;
@@ -487,6 +528,14 @@ export const ChatInput: FC<ChatInputProps> = ({
         />
 
         <div className="relative bg-background border border-border/40 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden ring-0 group-focus-within:ring-1 group-focus-within:ring-primary/20 group-focus-within:border-primary/20">
+          <button
+            type="button"
+            className="flex h-3 w-full cursor-row-resize items-center justify-center border-b border-border/30 bg-muted/20 hover:bg-muted/40"
+            onMouseDown={handleResizeMouseDown}
+            aria-label="Resize chat input"
+          >
+            <div className="h-1 w-12 rounded-full bg-border/70" />
+          </button>
           <div className="relative" ref={containerRef}>
             <Textarea
               ref={textareaRef}
@@ -509,6 +558,7 @@ export const ChatInput: FC<ChatInputProps> = ({
               className="resize-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent px-5 py-4 text-base transition-all duration-200 placeholder:text-muted-foreground/50 overflow-y-auto leading-relaxed antialiased font-normal"
               style={{
                 minHeight: `${minHeightValue}px`,
+                height: `${inputHeight}px`,
               }}
               disabled={isPending || disabled}
               aria-label={i18n._("Message input with completion support")}
