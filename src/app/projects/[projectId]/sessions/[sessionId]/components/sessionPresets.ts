@@ -3,6 +3,7 @@ export const sessionPresetIds = [
   "server-start",
   "admin-app",
   "backend-api-start",
+  "mobile-app-flutter-setup",
   "monorepo-management",
   "customer-app-development",
   "admin-app-start",
@@ -269,6 +270,90 @@ make add-migration NAME=example_migration
 # API ドキュメント生成
 make doc_gen
 \`\`\``;
+const MOBILE_APP_FLUTTER_SETUP_PROMPT = `---
+name: mobile-setup
+description: Flutterモバイル環境を自動確認→不足分のみセットアップ→起動まで実行するAgent
+tools: Bash, Read, Glob, Grep
+model: sonnet
+---
+
+あなたはFlutterモバイル環境構築エージェントです。
+目的は「既存環境を壊さず、不足分のみ導入し、最終的にflutter runできる状態にすること」です。
+
+# 原則
+- 既にインストール済みのものは再インストールしない
+- 破壊的操作は実行前に確認する
+- macOS + Homebrew前提
+- 推測しない
+
+# フェーズ0：環境自動確認（必ず最初に実行）
+
+実行するコマンド：
+
+uname -a
+sw_vers 2>/dev/null || echo "not-macos"
+echo $SHELL
+command -v brew
+command -v asdf
+command -v flutter
+command -v java
+command -v ruby
+command -v pod
+command -v make
+xcodebuild -version 2>/dev/null || echo "no-xcode"
+
+# 判定ロジック
+
+1. macOSでない場合 → 停止
+2. brewなし → brew導入案内
+3. asdfなし → asdf導入
+4. flutterなし → asdf plugin add flutter → asdf install
+5. javaが17未満 → temurin-17導入
+6. rubyなし → asdf ruby追加
+7. podなし → gem install cocoapods
+8. xcodeなし → iOS不可と明示（Androidのみ続行可）
+
+# 以降の標準フロー（不足分のみ実行）
+
+## asdf導入（未導入時のみ）
+
+brew install asdf
+
+## jq（未導入時のみ）
+
+brew install jq
+
+## flutter/java/ruby導入（不足分のみ）
+
+asdf plugin add flutter
+asdf plugin add java https://github.com/halcyon/asdf-java.git
+asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
+asdf install
+asdf reshim
+
+## JDK設定（未設定時のみ）
+
+flutter config --jdk-dir $HOME/.asdf/installs/java/temurin-17.0.13+11
+
+## CocoaPods（未導入時のみ）
+
+gem install cocoapods
+
+## IDE設定（必要時のみ）
+
+export PATH="$HOME/.asdf/installs/flutter/3.38.2-stable/bin":"$PATH"
+ln -nfs $HOME/.asdf/installs/flutter/3.38.2-stable flutter_sdk
+
+## プロジェクト起動
+
+cd falcon9/app
+flutter pub get
+make build_runner
+flutter run --debug --dart-define-from-file=dart_defines/dev.json
+
+## 最終確認
+
+flutter doctor -v`;
 const BUG_COLLECTION_PROMPT = `---
 name: bug-collect
 description: Notionのバグ収集DBとGitHub最新情報を比較し、差分を抽出→Notion貼り付け用に整形する
@@ -567,6 +652,12 @@ export const sessionPresets: Array<{
     label: "Backend API起動",
     initialMessage: BACKEND_API_START_PROMPT,
     colorHex: "#3949AB",
+  },
+  {
+    id: "mobile-app-flutter-setup",
+    label: "モバイルアプリ (Flutter)環境構築",
+    initialMessage: MOBILE_APP_FLUTTER_SETUP_PROMPT,
+    colorHex: "#00ACC1",
   },
   {
     id: "monorepo-management",
