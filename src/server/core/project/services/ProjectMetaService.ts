@@ -19,6 +19,24 @@ const LayerImpl = Effect.gen(function* () {
   const projectPathCache = yield* FileCacheStorage<string | null>();
   const projectMetaCacheRef = yield* Ref.make(new Map<string, ProjectMeta>());
 
+  const extractCwdFromRawJson = (line: string): string | null => {
+    try {
+      const parsed = JSON.parse(line);
+      if (typeof parsed !== "object" || parsed === null) {
+        return null;
+      }
+
+      if (!("cwd" in parsed)) {
+        return null;
+      }
+
+      const cwd = parsed.cwd;
+      return typeof cwd === "string" ? cwd : null;
+    } catch {
+      return null;
+    }
+  };
+
   const inferProjectPathFromClaudeProjectPath = (
     claudeProjectPath: string,
   ): Effect.Effect<string | null, Error> =>
@@ -98,6 +116,11 @@ const LayerImpl = Effect.gen(function* () {
           conversation.type === "custom-title" ||
           conversation.type === "agent-name"
         ) {
+          const fallbackCwd = extractCwdFromRawJson(line);
+          if (fallbackCwd !== null) {
+            cwd = fallbackCwd;
+            break;
+          }
           continue;
         }
 

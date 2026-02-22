@@ -113,6 +113,55 @@ describe("ProjectMetaService", () => {
       expect(result.projectPath).toBeNull();
       expect(result.sessionCount).toBe(1);
     });
+
+    it("extracts project path from raw json cwd fallback", async () => {
+      const program = Effect.gen(function* () {
+        const storage = yield* ProjectMetaService;
+        const projectId = Buffer.from("/test/project").toString("base64url");
+        return yield* storage.getProjectMeta(projectId);
+      });
+
+      const result = await Effect.runPromise(
+        program.pipe(
+          Effect.provide(ProjectMetaService.Live),
+          Effect.provide(
+            testFileSystemLayer({
+              readDirectory: () => Effect.succeed(["session1.jsonl"]),
+              // Intentionally invalid for ConversationSchema, but contains cwd.
+              readFileString: () =>
+                Effect.succeed(
+                  '{"type":"unknown-format","cwd":"/workspace/app"}',
+                ),
+              stat: () =>
+                Effect.succeed({
+                  type: "File",
+                  mtime: Option.some(new Date("2024-01-01")),
+                  atime: Option.none(),
+                  birthtime: Option.none(),
+                  dev: 0,
+                  ino: Option.none(),
+                  mode: 0,
+                  nlink: Option.none(),
+                  uid: Option.none(),
+                  gid: Option.none(),
+                  rdev: Option.none(),
+                  size: FileSystem.Size(0n),
+                  blksize: Option.none(),
+                  blocks: Option.none(),
+                }),
+              exists: () => Effect.succeed(true),
+              makeDirectory: () => Effect.void,
+              writeFileString: () => Effect.void,
+            }),
+          ),
+          Effect.provide(testPlatformLayer()),
+        ),
+      );
+
+      expect(result.projectName).toBe("app");
+      expect(result.projectPath).toBe("/workspace/app");
+      expect(result.sessionCount).toBe(1);
+    });
   });
 
   describe("invalidateProject", () => {
