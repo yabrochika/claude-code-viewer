@@ -44,7 +44,17 @@ export const useCreateSessionProcessMutation = (
       );
 
       if (!response.ok) {
-        throw new Error(response.statusText);
+        const errorBody = await response
+          .json()
+          .catch(() => ({ error: response.statusText }));
+        const message =
+          typeof errorBody === "object" &&
+          errorBody !== null &&
+          "error" in errorBody &&
+          typeof errorBody.error === "string"
+            ? errorBody.error
+            : response.statusText;
+        throw new Error(message);
       }
 
       return response.json();
@@ -93,7 +103,17 @@ export const useContinueSessionProcessMutation = (
       );
 
       if (!response.ok) {
-        throw new Error(response.statusText);
+        const errorBody = await response
+          .json()
+          .catch(() => ({ error: response.statusText }));
+        const message =
+          typeof errorBody === "object" &&
+          errorBody !== null &&
+          "error" in errorBody &&
+          typeof errorBody.error === "string"
+            ? errorBody.error
+            : response.statusText;
+        throw new Error(message);
       }
 
       return response.json();

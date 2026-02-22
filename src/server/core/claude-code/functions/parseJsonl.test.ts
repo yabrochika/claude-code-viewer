@@ -75,12 +75,16 @@ describe("parseJsonl", () => {
   });
 
   describe("エラー系: 不正なJSON行をErrorJsonlとして返す", () => {
-    it("無効なJSONを渡すとエラーを投げる", () => {
+    it("無効なJSONを渡すとErrorJsonlとして返す", () => {
       const jsonl = "invalid json";
 
-      // parseJsonl の実装は JSON.parse をそのまま呼び出すため、
-      // 無効な JSON は例外を投げます
-      expect(() => parseJsonl(jsonl)).toThrow();
+      const result = parseJsonl(jsonl);
+
+      expect(result).toHaveLength(1);
+      const errorEntry = result[0] as ErrorJsonl;
+      expect(errorEntry.type).toBe("x-error");
+      expect(errorEntry.line).toBe("invalid json");
+      expect(errorEntry.lineNumber).toBe(1);
     });
 
     it("スキーマに合わないオブジェクトをErrorJsonlとして返す", () => {

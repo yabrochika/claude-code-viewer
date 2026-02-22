@@ -30,6 +30,34 @@ export const claudeCodePathPriority = (path: string): number => {
   return 2;
 };
 
+export const normalizeClaudeExecutablePath = (value: string): string => {
+  const normalized = value.trim();
+  const gitBashStylePath = normalized.match(/^\/([a-zA-Z])\/(.+)$/);
+
+  const normalizedPath =
+    gitBashStylePath === null
+      ? normalized
+      : `${gitBashStylePath[1]?.toUpperCase()}:/${gitBashStylePath[2] ?? ""}`;
+
+  const hasExecutableExtension = /\.(cmd|exe|bat)$/i.test(normalizedPath);
+  const isWindowsAbsolutePath =
+    /^[a-zA-Z]:[\\/]/.test(normalizedPath) || normalizedPath.startsWith("\\\\");
+  const isNpmShimPath = /(?:[\\/](?:npm|\.bin)[\\/]claude)$/i.test(
+    normalizedPath,
+  );
+
+  if (
+    process.platform === "win32" &&
+    isWindowsAbsolutePath &&
+    isNpmShimPath &&
+    !hasExecutableExtension
+  ) {
+    return `${normalizedPath}.cmd`;
+  }
+
+  return normalizedPath;
+};
+
 class ClaudeCodePathNotFoundError extends Data.TaggedError(
   "ClaudeCodePathNotFoundError",
 )<{
@@ -50,7 +78,7 @@ const resolveClaudeCodePath = Effect.gen(function* () {
   const specifiedExecutablePath =
     yield* ccvOptionsService.getCcvOptions("executable");
   if (specifiedExecutablePath !== undefined) {
-    return path.resolve(specifiedExecutablePath);
+    return path.resolve(normalizeClaudeExecutablePath(specifiedExecutablePath));
   }
 
   // System PATH lookup
@@ -92,14 +120,18 @@ const resolveClaudeCodePath = Effect.gen(function* () {
     );
   }
 
-  return resolvedClaudePath;
+  return normalizeClaudeExecutablePath(resolvedClaudePath);
 });
 
 export const Config = Effect.gen(function* () {
   const claudeCodeExecutablePath = yield* resolveClaudeCodePath;
+  const versionCommand = Command.make(
+    claudeCodeExecutablePath,
+    "--version",
+  ).pipe(Command.runInShell(process.platform === "win32"));
 
   const claudeCodeVersion = ClaudeCodeVersion.fromCLIString(
-    yield* Command.string(Command.make(claudeCodeExecutablePath, "--version")),
+    yield* Command.string(versionCommand),
   );
 
   return {
@@ -190,12 +222,14 @@ export const query = (
   return Effect.gen(function* () {
     const { claudeCodeExecutablePath, claudeCodeVersion } = yield* Config;
     const availableFeatures = getAvailableFeatures(claudeCodeVersion);
+    const sdkExecutablePath =
+      process.platform === "win32" ? "claude" : claudeCodeExecutablePath;
 
     const options: AgentSdkQueryOptions = {
       ...baseOptions,
       systemPrompt,
       settingSources,
-      pathToClaudeCodeExecutable: claudeCodeExecutablePath,
+      pathToClaudeCodeExecutable: sdkExecutablePath,
       disallowedTools: [
         "AskUserQuestion",
         ...(baseOptions.disallowedTools ?? []),

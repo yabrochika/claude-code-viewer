@@ -107,6 +107,32 @@ describe("ClaudeCode.claudeCodePathPriority", () => {
   });
 });
 
+describe("ClaudeCode.normalizeClaudeExecutablePath", () => {
+  it("converts git-bash style /c/... path into Windows drive path", () => {
+    const expectedPath =
+      process.platform === "win32"
+        ? "C:/Users/tester/AppData/Roaming/npm/claude.cmd"
+        : "C:/Users/tester/AppData/Roaming/npm/claude";
+    expect(
+      ClaudeCode.normalizeClaudeExecutablePath(
+        "/c/Users/tester/AppData/Roaming/npm/claude",
+      ),
+    ).toBe(expectedPath);
+  });
+
+  it("keeps normal absolute path unchanged", () => {
+    expect(
+      ClaudeCode.normalizeClaudeExecutablePath("/usr/local/bin/claude"),
+    ).toBe("/usr/local/bin/claude");
+  });
+
+  it("adds .cmd extension for Windows npm shim path", () => {
+    const path = "C:/Users/tester/AppData/Roaming/npm/claude";
+    const expectedPath = process.platform === "win32" ? `${path}.cmd` : path;
+    expect(ClaudeCode.normalizeClaudeExecutablePath(path)).toBe(expectedPath);
+  });
+});
+
 describe("ClaudeCode.Config", () => {
   describe("when environment variable CLAUDE_CODE_VIEWER_CC_EXECUTABLE_PATH is not set", () => {
     it("should correctly parse results of 'which claude' and 'claude --version'", async () => {
@@ -130,6 +156,40 @@ describe("ClaudeCode.Config", () => {
 
       expect(config.claudeCodeExecutablePath).toBe("/path/to/claude");
 
+      expect(config.claudeCodeVersion).toStrictEqual({
+        major: 1,
+        minor: 0,
+        patch: 53,
+      });
+    });
+
+    it("normalizes git-bash style path returned by which", async () => {
+      const CommandExecutorTest = Layer.effect(
+        CommandExecutor.CommandExecutor,
+        Effect.map(CommandExecutor.CommandExecutor, (realExecutor) => ({
+          ...realExecutor,
+          string: (() => {
+            const responses = [
+              "/c/Users/tester/AppData/Roaming/npm/claude",
+              "1.0.53 (Claude Code)\n",
+            ];
+            return () => Effect.succeed(responses.shift() ?? "");
+          })(),
+        })),
+      ).pipe(Layer.provide(NodeContext.layer));
+
+      const config = await Effect.runPromise(
+        ClaudeCode.Config.pipe(
+          Effect.provide(testPlatformLayer()),
+          Effect.provide(CommandExecutorTest),
+        ),
+      );
+
+      const expectedPath =
+        process.platform === "win32"
+          ? "C:/Users/tester/AppData/Roaming/npm/claude.cmd"
+          : "C:/Users/tester/AppData/Roaming/npm/claude";
+      expect(config.claudeCodeExecutablePath).toBe(expectedPath);
       expect(config.claudeCodeVersion).toStrictEqual({
         major: 1,
         minor: 0,

@@ -8,7 +8,19 @@ export const parseJsonl = (content: string): ExtendedConversation[] => {
     .filter((line) => line.trim() !== "");
 
   return lines.map((line, index) => {
-    const parsed = ConversationSchema.safeParse(JSON.parse(line));
+    let rawJson: unknown;
+    try {
+      rawJson = JSON.parse(line);
+    } catch {
+      const errorData: ErrorJsonl = {
+        type: "x-error",
+        line,
+        lineNumber: index + 1,
+      };
+      return errorData;
+    }
+
+    const parsed = ConversationSchema.safeParse(rawJson);
     if (!parsed.success) {
       const errorData: ErrorJsonl = {
         type: "x-error",

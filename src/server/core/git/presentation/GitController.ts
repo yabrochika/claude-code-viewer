@@ -23,8 +23,11 @@ const LayerImpl = Effect.gen(function* () {
       try {
         if (project.meta.projectPath === null) {
           return {
-            response: { error: "Project path not found" },
-            status: 400,
+            response: {
+              success: false,
+              error: "Project path not found",
+            },
+            status: 200,
           } as const satisfies ControllerResponse;
         }
 
@@ -277,8 +280,10 @@ const LayerImpl = Effect.gen(function* () {
 
       if (project.meta.projectPath === null) {
         return {
-          response: { error: "Project path not found" },
-          status: 400,
+          response: {
+            success: false,
+          },
+          status: 200,
         } as const satisfies ControllerResponse;
       }
 
@@ -381,7 +386,7 @@ const LayerImpl = Effect.gen(function* () {
       if (project.meta.projectPath === null) {
         return {
           response: { success: false, error: "Project path not found" },
-          status: 400,
+          status: 200,
         } as const satisfies ControllerResponse;
       }
 

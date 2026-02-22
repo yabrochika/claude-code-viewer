@@ -168,7 +168,20 @@ export const ChatInput: FC<ChatInputProps> = ({
     setInputHeight((prev) => Math.max(prev, minHeightValue));
   }, [minHeightValue]);
 
-  const handleResizeMouseMove = useCallback((event: MouseEvent) => {
+  const handleResizeMouseMoveRef = useRef<(event: MouseEvent) => void>(
+    () => {},
+  );
+  const handleResizeMouseUpRef = useRef<() => void>(() => {});
+
+  const onWindowMouseMove = useCallback((event: MouseEvent) => {
+    handleResizeMouseMoveRef.current(event);
+  }, []);
+
+  const onWindowMouseUp = useCallback(() => {
+    handleResizeMouseUpRef.current();
+  }, []);
+
+  handleResizeMouseMoveRef.current = (event: MouseEvent) => {
     const start = resizeStartRef.current;
     if (start === null) return;
 
@@ -176,35 +189,35 @@ export const ChatInput: FC<ChatInputProps> = ({
     const maxHeight = 520;
     const nextHeight = Math.max(
       minHeightRef.current,
-      Math.min(start.height - deltaY, maxHeight),
+      Math.min(start.height + deltaY, maxHeight),
     );
     setInputHeight(nextHeight);
-  }, []);
+  };
 
-  const handleResizeMouseUp = useCallback(() => {
+  handleResizeMouseUpRef.current = () => {
     resizeStartRef.current = null;
     setIsManualResized(false);
-    window.removeEventListener("mousemove", handleResizeMouseMove);
-    window.removeEventListener("mouseup", handleResizeMouseUp);
-  }, [handleResizeMouseMove]);
+    window.removeEventListener("mousemove", onWindowMouseMove);
+    window.removeEventListener("mouseup", onWindowMouseUp);
+  };
 
   const handleResizeMouseDown = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
       setIsManualResized(true);
       resizeStartRef.current = { y: event.clientY, height: inputHeight };
-      window.addEventListener("mousemove", handleResizeMouseMove);
-      window.addEventListener("mouseup", handleResizeMouseUp);
+      window.addEventListener("mousemove", onWindowMouseMove);
+      window.addEventListener("mouseup", onWindowMouseUp);
     },
-    [inputHeight, handleResizeMouseMove, handleResizeMouseUp],
+    [inputHeight, onWindowMouseMove, onWindowMouseUp],
   );
 
   useEffect(() => {
     return () => {
-      window.removeEventListener("mousemove", handleResizeMouseMove);
-      window.removeEventListener("mouseup", handleResizeMouseUp);
+      window.removeEventListener("mousemove", onWindowMouseMove);
+      window.removeEventListener("mouseup", onWindowMouseUp);
     };
-  }, [handleResizeMouseMove, handleResizeMouseUp]);
+  }, [onWindowMouseMove, onWindowMouseUp]);
 
   const handleSubmit = async () => {
     if (!message.trim() && attachedFiles.length === 0) return;

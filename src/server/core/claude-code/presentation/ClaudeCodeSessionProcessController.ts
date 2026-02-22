@@ -53,17 +53,11 @@ const LayerImpl = Effect.gen(function* () {
 
       const { project } = yield* projectRepository.getProject(projectId);
       const userConfig = yield* userConfigService.getUserConfig();
-
-      if (project.meta.projectPath === null) {
-        return {
-          response: { error: "Project path not found" },
-          status: 400 as const,
-        } as const satisfies ControllerResponse;
-      }
+      const cwd = project.meta.projectPath ?? project.claudeProjectPath;
 
       const result = yield* claudeCodeLifeCycleService.startSessionProcess({
         projectId,
-        cwd: project.meta.projectPath,
+        cwd,
         baseSession,
         userConfig,
         input,
@@ -93,14 +87,7 @@ const LayerImpl = Effect.gen(function* () {
     Effect.gen(function* () {
       const { projectId, input, baseSessionId, sessionProcessId } = options;
 
-      const { project } = yield* projectRepository.getProject(projectId);
-
-      if (project.meta.projectPath === null) {
-        return {
-          response: { error: "Project path not found" },
-          status: 400,
-        } as const satisfies ControllerResponse;
-      }
+      yield* projectRepository.getProject(projectId);
 
       const result = yield* claudeCodeLifeCycleService.continueSessionProcess({
         sessionProcessId,

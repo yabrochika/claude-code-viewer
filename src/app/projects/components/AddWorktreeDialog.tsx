@@ -90,6 +90,9 @@ export const AddWorktreeDialog: FC = () => {
           targetPath: worktreePath,
         },
       });
+      if (!response.ok) {
+        throw new Error("Failed to create worktree");
+      }
       return await response.json();
     },
     onSuccess: () => {

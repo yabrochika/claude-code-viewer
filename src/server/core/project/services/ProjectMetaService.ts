@@ -19,19 +19,41 @@ const LayerImpl = Effect.gen(function* () {
   const projectPathCache = yield* FileCacheStorage<string | null>();
   const projectMetaCacheRef = yield* Ref.make(new Map<string, ProjectMeta>());
 
+  const findCwdInUnknown = (value: unknown): string | null => {
+    if (typeof value !== "object" || value === null) {
+      return null;
+    }
+
+    if ("cwd" in value) {
+      const cwd = Reflect.get(value, "cwd");
+      if (typeof cwd === "string") {
+        return cwd;
+      }
+    }
+
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        const found = findCwdInUnknown(item);
+        if (found !== null) {
+          return found;
+        }
+      }
+      return null;
+    }
+
+    for (const child of Object.values(value)) {
+      const found = findCwdInUnknown(child);
+      if (found !== null) {
+        return found;
+      }
+    }
+
+    return null;
+  };
+
   const extractCwdFromRawJson = (line: string): string | null => {
     try {
-      const parsed = JSON.parse(line);
-      if (typeof parsed !== "object" || parsed === null) {
-        return null;
-      }
-
-      if (!("cwd" in parsed)) {
-        return null;
-      }
-
-      const cwd = parsed.cwd;
-      return typeof cwd === "string" ? cwd : null;
+      return findCwdInUnknown(JSON.parse(line));
     } catch {
       return null;
     }
