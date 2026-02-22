@@ -146,7 +146,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        514
+        564
       ]
     ],
     "translation": "Message input with autocomplete support"
@@ -562,7 +562,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        407
+        448
       ]
     ],
     "translation": "Failed to send message. Please try again."
@@ -714,7 +714,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        246
+        287
       ]
     ],
     "translation": "Failed to schedule message"
@@ -726,7 +726,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        230
+        271
       ]
     ],
     "translation": "Message scheduled successfully"
@@ -738,7 +738,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        235
+        276
       ]
     ],
     "translation": "You can view and manage it in the Scheduler tab"
@@ -760,11 +760,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        567
+        617
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        627
+        677
       ]
     ],
     "translation": "Send Now"
@@ -775,11 +775,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        550
+        600
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        610
+        660
       ]
     ],
     "translation": "Send Mode"
@@ -790,15 +790,15 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        570
+        620
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        630
+        680
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        647
+        697
       ]
     ],
     "translation": "Schedule Send"
@@ -809,7 +809,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        577
+        627
       ]
     ],
     "translation": "Scheduled Send Time"
@@ -832,7 +832,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        666
+        716
       ]
     ],
     "translation": "Processing..."

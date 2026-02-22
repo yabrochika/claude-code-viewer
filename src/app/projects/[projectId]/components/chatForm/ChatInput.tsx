@@ -142,6 +142,7 @@ export const ChatInput: FC<ChatInputProps> = ({
   const commandCompletionRef = useRef<CommandCompletionRef>(null);
   const fileCompletionRef = useRef<FileCompletionRef>(null);
   const resizeStartRef = useRef<{ y: number; height: number } | null>(null);
+  const minHeightRef = useRef(minHeightValue);
   const helpId = useId();
   const { config } = useConfig();
   const createSchedulerJob = useCreateSchedulerJob();
@@ -163,27 +164,26 @@ export const ChatInput: FC<ChatInputProps> = ({
 
   // Keep manual resize minimum in sync when props change.
   useEffect(() => {
+    minHeightRef.current = minHeightValue;
     setInputHeight((prev) => Math.max(prev, minHeightValue));
   }, [minHeightValue]);
 
-  const handleResizeMouseMove = useCallback(
-    (event: MouseEvent) => {
-      const start = resizeStartRef.current;
-      if (start === null) return;
+  const handleResizeMouseMove = useCallback((event: MouseEvent) => {
+    const start = resizeStartRef.current;
+    if (start === null) return;
 
-      const deltaY = event.clientY - start.y;
-      const maxHeight = 520;
-      const nextHeight = Math.max(
-        minHeightValue,
-        Math.min(start.height - deltaY, maxHeight),
-      );
-      setInputHeight(nextHeight);
-    },
-    [minHeightValue],
-  );
+    const deltaY = event.clientY - start.y;
+    const maxHeight = 520;
+    const nextHeight = Math.max(
+      minHeightRef.current,
+      Math.min(start.height - deltaY, maxHeight),
+    );
+    setInputHeight(nextHeight);
+  }, []);
 
   const handleResizeMouseUp = useCallback(() => {
     resizeStartRef.current = null;
+    setIsManualResized(false);
     window.removeEventListener("mousemove", handleResizeMouseMove);
     window.removeEventListener("mouseup", handleResizeMouseUp);
   }, [handleResizeMouseMove]);

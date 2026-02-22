@@ -19,6 +19,59 @@ const LayerImpl = Effect.gen(function* () {
   const projectPathCache = yield* FileCacheStorage<string | null>();
   const projectMetaCacheRef = yield* Ref.make(new Map<string, ProjectMeta>());
 
+  const inferProjectPathFromClaudeProjectPath = (
+    claudeProjectPath: string,
+  ): Effect.Effect<string | null, Error> =>
+    Effect.gen(function* () {
+      const encodedProjectName = path.basename(claudeProjectPath);
+      const tokens = encodedProjectName.split("-");
+
+      if (tokens.length === 0) {
+        return null;
+      }
+
+      const firstToken = tokens[0] ?? "";
+      const isWindowsDrive = /^[A-Za-z]:$/.test(firstToken);
+      const isPosixRoot = firstToken === "";
+
+      if (!isWindowsDrive && !isPosixRoot) {
+        return null;
+      }
+
+      const resolveSegments = (
+        currentPath: string,
+        tokenIndex: number,
+      ): Effect.Effect<string | null, Error> =>
+        Effect.gen(function* () {
+          if (tokenIndex >= tokens.length) {
+            return currentPath.replace(/[\\/]+$/, "");
+          }
+
+          for (let end = tokenIndex + 1; end <= tokens.length; end++) {
+            const segment = tokens.slice(tokenIndex, end).join("-");
+            if (segment.length === 0) {
+              continue;
+            }
+
+            const candidate = path.join(currentPath, segment);
+            const exists = yield* fs.exists(candidate);
+            if (!exists) {
+              continue;
+            }
+
+            const resolved = yield* resolveSegments(candidate, end);
+            if (resolved !== null) {
+              return resolved;
+            }
+          }
+
+          return null;
+        });
+
+      const basePath = isWindowsDrive ? `${firstToken}${path.sep}` : path.sep;
+      return yield* resolveSegments(basePath, 1);
+    });
+
   const extractProjectPathFromJsonl = (
     filePath: string,
   ): Effect.Effect<string | null, Error> =>
@@ -103,6 +156,11 @@ const LayerImpl = Effect.gen(function* () {
         }
 
         break;
+      }
+
+      if (projectPath === null) {
+        projectPath =
+          yield* inferProjectPathFromClaudeProjectPath(claudeProjectPath);
       }
 
       const projectMeta: ProjectMeta = {

@@ -58,6 +58,10 @@ export const ProjectList: FC = () => {
                 <Link
                   to={"/projects/$projectId/session"}
                   params={{ projectId: project.id }}
+                  search={{
+                    tab: "sessions",
+                    sessionId: undefined,
+                  }}
                   className="min-w-0 flex-1 space-y-2"
                 >
                   <CardTitle className="flex items-center gap-2 justify-start items-start text-base">
