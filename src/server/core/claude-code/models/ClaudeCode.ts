@@ -222,14 +222,19 @@ export const query = (
   return Effect.gen(function* () {
     const { claudeCodeExecutablePath, claudeCodeVersion } = yield* Config;
     const availableFeatures = getAvailableFeatures(claudeCodeVersion);
-    const sdkExecutablePath =
-      process.platform === "win32" ? "claude" : claudeCodeExecutablePath;
+    const shouldUseSdkDefaultEntrypoint =
+      process.platform === "win32" &&
+      /\.(cmd|ps1)$/i.test(claudeCodeExecutablePath);
 
     const options: AgentSdkQueryOptions = {
       ...baseOptions,
       systemPrompt,
       settingSources,
-      pathToClaudeCodeExecutable: sdkExecutablePath,
+      ...(shouldUseSdkDefaultEntrypoint
+        ? {}
+        : {
+            pathToClaudeCodeExecutable: claudeCodeExecutablePath,
+          }),
       disallowedTools: [
         "AskUserQuestion",
         ...(baseOptions.disallowedTools ?? []),
