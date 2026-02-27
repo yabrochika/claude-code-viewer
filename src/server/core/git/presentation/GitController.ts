@@ -397,9 +397,17 @@ const LayerImpl = Effect.gen(function* () {
       );
 
       if (Either.isLeft(branchesResult)) {
+        const details =
+          "message" in branchesResult.left
+            ? String(branchesResult.left.message)
+            : undefined;
         return {
-          response: { success: false, error: "Failed to get branches" },
-          status: 500,
+          response: {
+            success: false,
+            error: "Failed to get branches",
+            details,
+          },
+          status: 200,
         } as const satisfies ControllerResponse;
       }
 

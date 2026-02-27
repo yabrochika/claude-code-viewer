@@ -172,6 +172,7 @@ export const ChatInput: FC<ChatInputProps> = ({
     () => {},
   );
   const handleResizeMouseUpRef = useRef<() => void>(() => {});
+  const resizeListenersAttachedRef = useRef(false);
 
   const onWindowMouseMove = useCallback((event: MouseEvent) => {
     handleResizeMouseMoveRef.current(event);
@@ -180,6 +181,20 @@ export const ChatInput: FC<ChatInputProps> = ({
   const onWindowMouseUp = useCallback(() => {
     handleResizeMouseUpRef.current();
   }, []);
+
+  const attachResizeListeners = useCallback(() => {
+    if (resizeListenersAttachedRef.current) return;
+    window.addEventListener("mousemove", onWindowMouseMove);
+    window.addEventListener("mouseup", onWindowMouseUp);
+    resizeListenersAttachedRef.current = true;
+  }, [onWindowMouseMove, onWindowMouseUp]);
+
+  const detachResizeListeners = useCallback(() => {
+    if (!resizeListenersAttachedRef.current) return;
+    window.removeEventListener("mousemove", onWindowMouseMove);
+    window.removeEventListener("mouseup", onWindowMouseUp);
+    resizeListenersAttachedRef.current = false;
+  }, [onWindowMouseMove, onWindowMouseUp]);
 
   handleResizeMouseMoveRef.current = (event: MouseEvent) => {
     const start = resizeStartRef.current;
@@ -197,8 +212,7 @@ export const ChatInput: FC<ChatInputProps> = ({
   handleResizeMouseUpRef.current = () => {
     resizeStartRef.current = null;
     setIsManualResized(false);
-    window.removeEventListener("mousemove", onWindowMouseMove);
-    window.removeEventListener("mouseup", onWindowMouseUp);
+    detachResizeListeners();
   };
 
   const handleResizeMouseDown = useCallback(
@@ -206,18 +220,16 @@ export const ChatInput: FC<ChatInputProps> = ({
       event.preventDefault();
       setIsManualResized(true);
       resizeStartRef.current = { y: event.clientY, height: inputHeight };
-      window.addEventListener("mousemove", onWindowMouseMove);
-      window.addEventListener("mouseup", onWindowMouseUp);
+      attachResizeListeners();
     },
-    [inputHeight, onWindowMouseMove, onWindowMouseUp],
+    [attachResizeListeners, inputHeight],
   );
 
   useEffect(() => {
     return () => {
-      window.removeEventListener("mousemove", onWindowMouseMove);
-      window.removeEventListener("mouseup", onWindowMouseUp);
+      detachResizeListeners();
     };
-  }, [onWindowMouseMove, onWindowMouseUp]);
+  }, [detachResizeListeners]);
 
   const handleSubmit = async () => {
     if (!message.trim() && attachedFiles.length === 0) return;
@@ -664,39 +676,6 @@ export const ChatInput: FC<ChatInputProps> = ({
               </div>
 
               <div className="flex items-center gap-2">
-                {enableScheduledSend && sendMode === "immediate" && (
-                  <div className="hidden sm:flex items-center gap-2 order-2">
-                    <Label
-                      htmlFor="send-mode-desktop"
-                      className="text-xs sr-only"
-                    >
-                      <Trans id="chat.send_mode.label" />
-                    </Label>
-                    <Select
-                      value={sendMode}
-                      onValueChange={(value: "immediate" | "scheduled") =>
-                        setSendMode(value)
-                      }
-                      disabled={isPending || disabled}
-                    >
-                      <SelectTrigger
-                        id="send-mode-desktop"
-                        className="h-9 w-[140px] text-xs font-medium bg-background/50 border-transparent hover:bg-background hover:border-border/50 shadow-none hover:shadow-sm focus:ring-1 focus:ring-primary/20 transition-all duration-200"
-                      >
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="immediate">
-                          <Trans id="chat.send_mode.immediate" />
-                        </SelectItem>
-                        <SelectItem value="scheduled">
-                          <Trans id="chat.send_mode.scheduled" />
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
-
                 {enableScheduledSend && sendMode === "immediate" && (
                   <Button
                     type="button"

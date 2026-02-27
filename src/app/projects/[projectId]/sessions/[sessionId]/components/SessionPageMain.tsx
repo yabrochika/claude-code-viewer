@@ -42,7 +42,7 @@ import { useProject } from "../../../hooks/useProject";
 import { firstUserMessageToTitle } from "../../../services/firstCommandToTitle";
 import { useExportSession } from "../hooks/useExportSession";
 import { useGitCurrentRevisions } from "../hooks/useGit";
-import { useSession } from "../hooks/useSession";
+import { type useSession, useSessionOrNull } from "../hooks/useSession";
 import { useSessionProcess } from "../hooks/useSessionProcess";
 import { sessionProcessesAtom } from "../store/sessionProcessesAtom";
 import { ConversationList } from "./conversationList/ConversationList";
@@ -73,7 +73,7 @@ export const SessionPageMain: FC<SessionPageMainProps> = (props) => {
 const SessionPageMainWithData: FC<
   SessionPageMainProps & { sessionId: string }
 > = (props) => {
-  const sessionData = useSession(props.projectId, props.sessionId);
+  const sessionData = useSessionOrNull(props.projectId, props.sessionId);
   return (
     <SessionPageMainContent
       {...props}
