@@ -468,6 +468,7 @@
     "translation": "Tool Result"
   },
   "assistant.tool.retry": {
+    "message": "Retry",
     "placeholders": {},
     "comments": [],
     "origin": [
@@ -486,6 +487,10 @@
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/conversationList/TaskModal.tsx",
         192
+      ],
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
+        131
       ]
     ],
     "translation": "Retry"
@@ -619,7 +624,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        38
+        53
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -635,7 +640,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        31
+        46
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -651,7 +656,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        44
+        59
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -695,6 +700,18 @@
       ]
     ],
     "translation": "Type your message... (Start with / for commands, @ for files, Shift+Enter to send)"
+  },
+  "chat.queue.paused_suffix": {
+    "translation": " (Queue paused)",
+    "message": " (Queue paused)",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
+        119
+      ]
+    ]
   },
   "chat.resume": {
     "placeholders": {},
@@ -742,17 +759,6 @@
       ]
     ],
     "translation": "You can view and manage it in the Scheduler tab"
-  },
-  "chat.send": {
-    "placeholders": {},
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        61
-      ]
-    ],
-    "translation": "Send"
   },
   "chat.send_mode.immediate": {
     "placeholders": {},
@@ -2725,6 +2731,10 @@
       [
         "src/app/components/SessionHistoryPopover.tsx",
         217
+      ],
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
+        116
       ]
     ],
     "translation": "Paused"

@@ -59,7 +59,7 @@ export const ResumeChat: FC<{
         buttonText={buttonText}
         containerClassName=""
         buttonSize="default"
-        enableScheduledSend={true}
+        enableScheduledSend={false}
         baseSessionId={sessionId}
         enableCCOptions={true}
         presets={sessionPresets}

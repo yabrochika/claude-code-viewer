@@ -51,7 +51,7 @@ export const StartNewChat: FC<{ projectId: string }> = ({ projectId }) => {
         buttonText={<Trans id="chat.button.start" />}
         containerClassName=""
         buttonSize="default"
-        enableScheduledSend={true}
+        enableScheduledSend={false}
         enableCCOptions={true}
         presets={sessionPresets}
       />
